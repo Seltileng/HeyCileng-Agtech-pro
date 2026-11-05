@@ -1,0 +1,38 @@
+{% extends "layout_app.html" %}
+
+{% block title %}Buyer dashboard | HeyCileng Agtech{% endblock %}
+
+{% block content %}
+<div class="container page">
+    <div class="page-header">
+        <div>
+            <h1>Buyer dashboard</h1>
+            <p class="page-subtitle">Welcome, {{ g.user.full_name.split()[0] }}. Find biomass from farms and processors across Nigeria.</p>
+        </div>
+        <div class="page-actions">
+            <a class="button button-primary" href="{{ url_for('marketplace') }}">Browse the marketplace</a>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="dashboard-side">
+            <section class="panel">
+                <h2>Find raw materials</h2>
+                <p class="muted">Browse agricultural waste from farmers and agro-processors, then call the sellers directly to agree price and collection.</p>
+                <ul class="quick-actions buyer-shortcuts">
+                    <li><a href="{{ url_for('marketplace', search='cassava') }}"><strong>Cassava peels</strong>Livestock feed and biogas</a></li>
+                    <li><a href="{{ url_for('marketplace', search='husk') }}"><strong>Rice husks</strong>Boiler fuel and poultry bedding</a></li>
+                    <li><a href="{{ url_for('marketplace', search='stalk') }}"><strong>Crop stalks</strong>Animal feed and bio-energy</a></li>
+                </ul>
+            </section>
+
+            <section class="soon-card">
+                <h2>Orders and saved searches <span class="tag tag-soon">Coming soon</span></h2>
+                <p>Online ordering with Paystack, order history and saved searches will appear here.</p>
+            </section>
+        </div>
+
+        {% include "_account_details.html" %}
+    </div>
+</div>
+{% endblock %}

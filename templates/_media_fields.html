@@ -1,0 +1,72 @@
+{#
+    Photo and video upload boxes for the listing form.
+    Needs: media (the listing's current photos and video), errors, and
+    optionally removing (ids of current media already ticked "Remove").
+
+    Without JavaScript these are plain file inputs that still work.
+    With JavaScript, script.js adds previews and Remove buttons for
+    newly chosen files. The server checks every file again either way.
+#}
+{% set removing = removing or [] %}
+
+<fieldset class="field media-field">
+    <legend>Photos <span class="optional">(optional, up to {{ MAX_PHOTOS_PER_LISTING }})</span></legend>
+
+    {% if media.images %}
+        <p class="field-hint">Current photos. Tick Remove on any you want to delete.</p>
+        <ul class="media-grid">
+            {% for image in media.images %}
+                <li class="media-item media-existing" data-kind="image">
+                    <img src="{{ media_url('image', image.filename) }}" alt="Photo {{ loop.index }} of this listing" loading="lazy"
+                         onerror="this.parentElement.classList.add('media-missing')">
+                    <label class="media-remove-toggle">
+                        <input type="checkbox" name="remove_media" value="{{ image.id }}" {% if image.id in removing %}checked{% endif %}>
+                        <span>Remove</span>
+                    </label>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <input class="media-input" id="photos" name="photos" type="file" multiple
+           accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+           data-media-input="image" data-max-files="{{ MAX_PHOTOS_PER_LISTING }}" data-max-size="{{ 5 * 1024 * 1024 }}"
+           {%- if errors.photos %} aria-invalid="true" aria-describedby="photos-error"{% endif %}>
+    <label class="media-picker" for="photos">
+        <span class="media-picker-title">{{ "Add more photos" if media.images else "Choose photos" }}</span>
+        <span class="media-picker-hint">JPG, PNG or WEBP, up to 5 MB each</span>
+    </label>
+    <p class="media-message" data-media-message="photos" role="status"></p>
+    <ul class="media-grid" data-media-previews="photos"></ul>
+    {% if errors.photos %}<p class="field-error" id="photos-error">{{ errors.photos }}</p>{% endif %}
+</fieldset>
+
+<fieldset class="field media-field">
+    <legend>Video <span class="optional">(optional, 1 video)</span></legend>
+
+    {% if media.video %}
+        <p class="field-hint">Current video. Choosing a new video replaces it.</p>
+        <ul class="media-grid media-grid-video">
+            <li class="media-item media-existing" data-kind="video">
+                <video src="{{ media_url('video', media.video.filename) }}" controls preload="metadata"
+                       onerror="this.parentElement.classList.add('media-missing')"></video>
+                <label class="media-remove-toggle">
+                    <input type="checkbox" name="remove_media" value="{{ media.video.id }}" {% if media.video.id in removing %}checked{% endif %}>
+                    <span>Remove</span>
+                </label>
+            </li>
+        </ul>
+    {% endif %}
+
+    <input class="media-input" id="video" name="video" type="file"
+           accept=".mp4,.webm,video/mp4,video/webm"
+           data-media-input="video" data-max-files="1" data-max-size="{{ 50 * 1024 * 1024 }}"
+           {%- if errors.video %} aria-invalid="true" aria-describedby="video-error"{% endif %}>
+    <label class="media-picker" for="video">
+        <span class="media-picker-title">{{ "Replace video" if media.video else "Choose a video" }}</span>
+        <span class="media-picker-hint">MP4 or WEBM, up to 50 MB</span>
+    </label>
+    <p class="media-message" data-media-message="video" role="status"></p>
+    <ul class="media-grid media-grid-video" data-media-previews="video"></ul>
+    {% if errors.video %}<p class="field-error" id="video-error">{{ errors.video }}</p>{% endif %}
+</fieldset>

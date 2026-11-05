@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Payment status · HeyCileng</title>
+<style>body{font-family:system-ui,sans-serif;background:#f4f6ef;color:#1d2a1b;display:grid;place-items:center;min-height:100vh;margin:0;padding:24px}
+main{max-width:460px}h1{margin:0 0 8px}a{color:#1d2a1b;font-weight:600}</style></head>
+<body><main id="out"></main>
+<script>
+const p = new URLSearchParams(location.search), ok = p.get('status') === 'success';
+document.title = (ok ? 'Payment received' : 'Payment not completed') + ' · HeyCileng';
+document.getElementById('out').innerHTML = ok
+  ? `<h1>Payment received</h1><p>Your reference is <b>${(p.get('ref')||'').replace(/[<>&"]/g,'')}</b>. We will contact you to arrange pickup and delivery.</p><a href="/">Back to home</a>`
+  : `<h1>Payment not completed</h1><p>No money was taken. You can try again.</p><a href="/#order">Back to the order form</a>`;
+</script></body></html>

@@ -1,0 +1,2474 @@
+/*
+    HeyCileng Agtech - styles shared by every page.
+    The homepage adds home.css on top of this file.
+
+    Sections, in order:
+      1. Design tokens        6. Badges, tags, tiles     11. Listing details
+      2. Base                 7. Toasts and dialog       12. Login and sign-up
+      3. Header and nav       8. Page header, panels     13. Dashboards
+      4. Footer               9. Listing cards           14. Photo/video uploads
+      5. Buttons and forms   10. Marketplace filters     15. Small screens
+*/
+
+/* ---------- 1. Design tokens ----------
+   Light theme first. [data-theme="dark"] below swaps the colours that
+   change; everything else uses these names, so both themes stay in step.
+   The theme is chosen by the small script at the top of base.html. */
+:root {
+    /* Colours that are the same in both themes */
+    --leaf: #1d3a2a;          /* header, stats band, toasts */
+    --ink: #16221a;           /* text on ochre, dark photo frames */
+    --ochre: #d49a1f;
+    --ochre-hover: #e3ab35;
+    --white: #ffffff;         /* text on green */
+
+    /* Light theme */
+    --bg: #f7f3e8;            /* cream page background */
+    --surface: #ffffff;       /* cards and panels */
+    --field: #f4f6ef;         /* form fields */
+    --text: #16221a;
+    --muted: #56645a;
+    --mist: #e3e9da;          /* soft green fill */
+    --line: #c9d3be;          /* borders */
+    --brand: #1d3a2a;         /* green text, links and outlines */
+    --brand-hover: #2c5540;
+    --primary: #24613f;       /* forest-green primary buttons */
+    --primary-hover: #1d3a2a;
+    --on-primary: #ffffff;
+    --danger: #a3221b;
+    --danger-bg: #fbeceb;
+    --danger-hover: #8a1c16;
+    --success: #24613f;
+    --success-bg: #e4f3dc;
+    --soon-bg: #fbf1dc;
+    --soon-text: #7a5208;
+    --neutral-bg: #e9e9e9;
+    --neutral-text: #5a5a5a;
+    --glass-60: rgba(255, 255, 255, 0.6);
+    --glass-70: rgba(255, 255, 255, 0.7);
+    --footer-bg: #16221a;
+    --footer-text: #cfd8c6;
+    --sidebar-bg: #ffffff;
+    --sidebar-active: #e3e9da;
+    --watermark-opacity: 0.07;
+    --watermark-filter: grayscale(40%);
+    --shadow: 0 1px 2px rgba(22, 34, 26, 0.08);
+    --shadow-lift: 0 8px 24px rgba(22, 34, 26, 0.12);
+    color-scheme: light;
+
+    --font-heading: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    --font-body: "Public Sans", "Segoe UI", system-ui, sans-serif;
+
+    --radius: 10px;
+    --radius-small: 6px;
+    --header-height: 64px;
+    --sidebar-width: 252px;
+}
+
+/* Dark theme: deep charcoal background, dark grey panels, light text, and
+   greens lightened so they still stand out. */
+:root[data-theme="dark"] {
+    --bg: #111513;
+    --surface: #1b211e;
+    --field: #141916;
+    --text: #e6ebe5;
+    --muted: #a6b2a9;
+    --mist: #24302a;
+    --line: #36443c;
+    --brand: #8fd0a3;
+    --brand-hover: #b0e2bf;
+    --primary: #2f7a4e;
+    --primary-hover: #3a8c5c;
+    --on-primary: #ffffff;
+    --danger: #ff958c;
+    --danger-bg: #3a1f1d;
+    --danger-hover: #8a1c16;
+    --success: #93d8a9;
+    --success-bg: #1b3325;
+    --soon-bg: #3a2e14;
+    --soon-text: #f0c56a;
+    --neutral-bg: #2c2f2d;
+    --neutral-text: #c4c8c5;
+    --glass-60: rgba(27, 33, 30, 0.6);
+    --glass-70: rgba(27, 33, 30, 0.75);
+    --footer-bg: #0b0e0c;
+    --footer-text: #b9c4b4;
+    --sidebar-bg: #161b18;
+    --sidebar-active: #24302a;
+    --watermark-opacity: 0.06;
+    --watermark-filter: grayscale(50%) brightness(0.7);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+    --shadow-lift: 0 8px 24px rgba(0, 0, 0, 0.5);
+    color-scheme: dark;
+}
+
+/* ---------- 2. Base ---------- */
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--header-height) + 16px);
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.55;
+}
+
+/* Background watermark: farmland fixed behind every page at 7% opacity and
+   40% greyscale, over the Paper background. Phones get a portrait crop. */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: url("../images/photos/background-farmland-small.jpg") center 70% / cover no-repeat;
+    opacity: var(--watermark-opacity);
+    filter: var(--watermark-filter);
+}
+
+@media (min-width: 721px) {
+    body::before {
+        background-image: url("../images/photos/background-farmland.jpg");
+    }
+}
+
+@media print {
+    body::before {
+        display: none;
+    }
+}
+
+h1,
+h2,
+h3 {
+    margin: 0;
+    font-family: var(--font-heading);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+}
+
+h1 {
+    font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+    font-weight: 800;
+}
+
+h2 {
+    font-size: 1.45rem;
+    font-weight: 700;
+}
+
+h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+p {
+    margin: 0;
+}
+
+ul,
+ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+a {
+    color: var(--brand);
+}
+
+:focus-visible {
+    outline: 3px solid var(--ochre);
+    outline-offset: 2px;
+}
+
+.container {
+    width: min(1160px, 100% - 32px);
+    margin-inline: auto;
+}
+
+.muted {
+    color: var(--muted);
+}
+
+/* Hidden on screen but still read out by screen readers. */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.skip-link {
+    position: absolute;
+    top: -100px;
+    left: 16px;
+    z-index: 100;
+    padding: 8px 12px;
+    background: var(--ochre);
+    border-radius: var(--radius-small);
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.skip-link:focus {
+    top: 8px;
+}
+
+main {
+    display: block;
+    min-height: 60vh;
+}
+
+.page {
+    padding-block: 32px 64px;
+}
+
+/* ---------- 3. Header and navigation ---------- */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--leaf);
+    color: var(--white);
+}
+
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: var(--header-height);
+}
+
+.brand {
+    color: var(--white);
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    text-decoration: none;
+}
+
+.brand small {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 500;
+    opacity: 0.75;
+}
+
+.site-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Plain nav links. The Join button keeps its own button style. */
+.site-nav a:not(.button),
+.nav-link-button {
+    padding: 8px 12px;
+    background: none;
+    border: 0;
+    border-radius: var(--radius-small);
+    color: var(--white);
+    font: inherit;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.site-nav a:not(.button):hover,
+.nav-link-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.site-nav a:not(.button)[aria-current="page"] {
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.site-nav form {
+    margin: 0;
+}
+
+.site-nav .button {
+    margin-left: 8px;
+    color: var(--ink);
+}
+
+.site-nav .button-accent:hover {
+    background: var(--ochre-hover);
+}
+
+.nav-user {
+    margin-left: 8px;
+    max-width: 18ch;
+    overflow: hidden;
+    font-size: 0.85rem;
+    opacity: 0.75;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* The hamburger: one span plus two pseudo-elements make three lines. */
+.menu-button {
+    display: none;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    background: none;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: var(--radius-small);
+    color: var(--white);
+    cursor: pointer;
+}
+
+.menu-icon,
+.menu-icon::before,
+.menu-icon::after {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: currentColor;
+    border-radius: 2px;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.menu-icon {
+    position: relative;
+}
+
+.menu-icon::before,
+.menu-icon::after {
+    content: "";
+    position: absolute;
+    left: 0;
+}
+
+.menu-icon::before {
+    top: -6px;
+}
+
+.menu-icon::after {
+    top: 6px;
+}
+
+.menu-button[aria-expanded="true"] .menu-icon {
+    background: transparent;
+}
+
+.menu-button[aria-expanded="true"] .menu-icon::before {
+    transform: translateY(6px) rotate(45deg);
+}
+
+.menu-button[aria-expanded="true"] .menu-icon::after {
+    transform: translateY(-6px) rotate(-45deg);
+}
+
+/* Below 820px: hamburger, with a full-width leaf-green menu underneath. */
+@media (max-width: 820px) {
+    .menu-button {
+        display: grid;
+    }
+
+    .site-nav {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 2px;
+        max-height: calc(100vh - var(--header-height));
+        overflow-y: auto;
+        padding: 8px 16px 20px;
+        background: var(--leaf);
+        box-shadow: 0 16px 24px rgba(22, 34, 26, 0.25);
+    }
+
+    .site-nav.open {
+        display: flex;
+    }
+
+    .site-nav a:not(.button),
+    .nav-link-button {
+        width: 100%;
+        padding: 12px;
+        text-align: left;
+    }
+
+    .site-nav .button {
+        width: 100%;
+        margin: 8px 0 0;
+    }
+
+    .nav-user {
+        order: -1;
+        max-width: none;
+        margin: 4px 12px 8px;
+    }
+}
+
+/* ---------- 4. Footer ---------- */
+.site-footer {
+    padding-block: 32px;
+    background: var(--footer-bg);
+    color: var(--footer-text);
+    font-size: 0.92rem;
+}
+
+.site-footer a {
+    color: var(--footer-text);
+}
+
+.site-footer a:hover {
+    color: var(--white);
+}
+
+.footer-inner {
+    display: grid;
+    gap: 16px;
+}
+
+.footer-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 24px;
+}
+
+.footer-brand {
+    color: var(--white);
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+
+.footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 20px;
+}
+
+.footer-links a {
+    text-decoration: none;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+.footer-bottom {
+    display: grid;
+    gap: 8px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(207, 216, 198, 0.2);
+    font-size: 0.85rem;
+}
+
+.photo-credits summary {
+    cursor: pointer;
+}
+
+.photo-credits p,
+.photo-credits ul {
+    margin-top: 8px;
+}
+
+.photo-credits ul {
+    display: grid;
+    gap: 4px;
+}
+
+.photo-credits {
+    overflow-wrap: anywhere;
+}
+
+/* ---------- 5. Buttons and forms ---------- */
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 11px 20px;
+    border: 2px solid transparent;
+    border-radius: var(--radius-small);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.button-primary {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--on-primary);
+}
+
+.button-primary:hover {
+    background: var(--primary-hover);
+    border-color: var(--primary-hover);
+}
+
+/* Ochre: for buttons on dark photos and green bands (landing page, Join). */
+.button-accent {
+    background: var(--ochre);
+    border-color: var(--ochre);
+    color: var(--ink);
+}
+
+.button-accent:hover {
+    background: var(--ochre-hover);
+    border-color: var(--ochre-hover);
+}
+
+.button-secondary {
+    background: var(--surface);
+    border-color: var(--brand);
+    color: var(--brand);
+}
+
+.button-secondary:hover {
+    background: var(--mist);
+}
+
+.button-dark {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--white);
+}
+
+.button-dark:hover {
+    background: var(--primary-hover);
+    border-color: var(--primary-hover);
+}
+
+.button-danger {
+    background: var(--surface);
+    border-color: var(--danger);
+    color: var(--danger);
+}
+
+.button-danger:hover {
+    background: var(--danger-bg);
+}
+
+/* The filled red button in the "are you sure?" dialog. */
+.button-danger-solid {
+    background: var(--danger);
+    border-color: var(--danger);
+    color: var(--white);
+}
+
+.button-danger-solid:hover {
+    background: var(--danger-hover);
+    border-color: var(--danger-hover);
+}
+
+/* White outline, for dark photo backgrounds. */
+.button-light-outline {
+    background: transparent;
+    border-color: var(--white);
+    color: var(--white);
+}
+
+.button-light-outline:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.button-small {
+    min-height: 36px;
+    padding: 6px 12px;
+    font-size: 0.88rem;
+}
+
+.button-block {
+    width: 100%;
+}
+
+.button[disabled],
+.button[aria-disabled="true"] {
+    background: var(--mist);
+    border-color: var(--line);
+    color: var(--muted);
+    cursor: not-allowed;
+}
+
+.text-link {
+    color: var(--brand);
+    font-weight: 600;
+}
+
+.field {
+    margin-bottom: 18px;
+}
+
+.field label,
+.field legend {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--text);
+    font-size: 0.93rem;
+    font-weight: 600;
+}
+
+.optional {
+    color: var(--muted);
+    font-weight: 400;
+}
+
+.field input[type="text"],
+.field input[type="email"],
+.field input[type="tel"],
+.field input[type="password"],
+.field input[type="number"],
+.field input[type="search"],
+.field select,
+.field textarea {
+    width: 100%;
+    min-height: 46px;
+    padding: 11px 12px;
+    background: var(--field);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-small);
+    color: var(--text);
+    font: inherit;
+}
+
+.field textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+    border-color: var(--brand);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(212, 154, 31, 0.35);
+}
+
+.field select[disabled] {
+    color: var(--muted);
+    cursor: not-allowed;
+}
+
+.field input[aria-invalid="true"],
+.field textarea[aria-invalid="true"] {
+    border-color: var(--danger);
+}
+
+.field-hint {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.field-error {
+    margin-top: 4px;
+    color: var(--danger);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.field-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 16px;
+}
+
+/* "Show"/"Hide" text button inside a password field. */
+.password-input {
+    position: relative;
+}
+
+.field .password-input input[type] {
+    padding-right: 72px;
+}
+
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    padding: 6px 8px;
+    background: none;
+    border: 0;
+    border-radius: var(--radius-small);
+    color: var(--brand);
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transform: translateY(-50%);
+}
+
+.password-toggle:hover {
+    background: var(--mist);
+}
+
+/* Checkbox with its label on the right. */
+.checkbox,
+.field .checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 0;
+    color: var(--text);
+    font-size: 0.95rem;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.checkbox input {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin: 1px 0 0;
+    accent-color: var(--brand);
+}
+
+.form-row-between {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: -2px 0 22px;
+}
+
+/* Form-level error box, above the form. Also used for green notices. */
+.form-error,
+.form-notice {
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    border-radius: var(--radius-small);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.form-error {
+    background: var(--danger-bg);
+    color: var(--danger);
+}
+
+.form-notice {
+    background: var(--success-bg);
+    color: var(--success);
+}
+
+/* ---------- 6. Badges, tags, tiles and empty states ---------- */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.badge-available {
+    background: var(--success-bg);
+    color: var(--success);
+}
+
+.badge-soldout {
+    background: var(--neutral-bg);
+    color: var(--neutral-text);
+}
+
+.tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.5;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+
+.tag-live {
+    background: var(--success-bg);
+    color: var(--success);
+}
+
+.tag-soon {
+    background: var(--soon-bg);
+    color: var(--soon-text);
+}
+
+.stat-tile {
+    padding: 18px 20px;
+    background: var(--surface);
+    border-top: 4px solid var(--ochre);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.stat-number {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    line-height: 1.1;
+}
+
+.stat-label {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+/* "Coming soon": dashed border, see-through white, muted text. */
+.soon-card {
+    padding: 18px 20px;
+    background: var(--glass-60);
+    border: 2px dashed var(--line);
+    border-radius: var(--radius);
+    color: var(--muted);
+}
+
+.soon-card .stat-number {
+    color: var(--line);
+}
+
+.empty-state {
+    padding: 48px;
+    background: var(--glass-70);
+    border-radius: var(--radius);
+    text-align: center;
+}
+
+.empty-state h2 {
+    margin-bottom: 8px;
+}
+
+.empty-state p {
+    color: var(--muted);
+}
+
+.empty-state .button {
+    margin-top: 16px;
+}
+
+/* ---------- 7. Toasts and confirm dialog ---------- */
+.toast-region {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 50;
+    display: grid;
+    gap: 8px;
+    width: min(420px, 100% - 32px);
+}
+
+.toast {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 14px 14px 16px;
+    background: var(--leaf);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lift);
+    color: var(--white);
+    font-weight: 500;
+    animation: toast-in 0.25s ease-out;
+}
+
+.toast.alert-error {
+    background: var(--danger);
+}
+
+.toast p {
+    flex: 1;
+}
+
+.toast-close {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    background: none;
+    border: 0;
+    border-radius: var(--radius-small);
+    color: var(--white);
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.toast-close:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+@keyframes toast-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+}
+
+.confirm-dialog {
+    width: min(420px, 100% - 32px);
+    padding: 24px;
+    background: var(--surface);
+    border: 0;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lift);
+    color: var(--text);
+}
+
+.confirm-dialog::backdrop {
+    background: rgba(29, 58, 42, 0.55);
+}
+
+.confirm-dialog p {
+    margin-top: 8px;
+    color: var(--muted);
+}
+
+.dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* ---------- 8. Page header, breadcrumbs and panels ---------- */
+.breadcrumbs {
+    margin-bottom: 8px;
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.breadcrumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.breadcrumbs li + li::before {
+    content: "\203A";
+    margin-right: 6px;
+}
+
+.breadcrumbs a {
+    color: var(--muted);
+}
+
+.page-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.page-header h1 {
+    overflow-wrap: anywhere;
+}
+
+.page-subtitle {
+    margin-top: 6px;
+    color: var(--muted);
+}
+
+.page-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.panel {
+    padding: 24px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow-wrap: anywhere;
+}
+
+.panel > h2 {
+    margin-bottom: 14px;
+}
+
+.panel-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 12px;
+    margin-bottom: 14px;
+}
+
+.details-list {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+}
+
+.details-list dt {
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.details-list dd {
+    margin: 0;
+    font-weight: 600;
+}
+
+.pre-line {
+    white-space: pre-line;
+}
+
+/* ---------- 9. Listing cards ---------- */
+.listing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr));
+    gap: 20px;
+}
+
+.listing-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.listing-card:hover,
+.listing-card:focus-within {
+    box-shadow: var(--shadow-lift);
+    transform: translateY(-2px);
+}
+
+.listing-cover {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--mist);
+}
+
+.listing-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.listing-cover .badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.media-pills {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    display: flex;
+    gap: 6px;
+}
+
+.media-pill {
+    padding: 2px 10px;
+    background: rgba(22, 34, 26, 0.72);
+    border-radius: 999px;
+    color: var(--white);
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.listing-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 14px 16px 16px;
+}
+
+.listing-category {
+    margin-bottom: 2px;
+    color: var(--muted);
+    font-size: 0.8rem;
+}
+
+.listing-body h3 a {
+    color: var(--text);
+    text-decoration: none;
+}
+
+/* The title link covers the whole card, so anywhere on it opens the listing. */
+.listing-body h3 a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+}
+
+.listing-line {
+    margin-top: 4px;
+    font-size: 0.92rem;
+}
+
+.listing-seller {
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 0.88rem;
+}
+
+.listing-price {
+    margin-top: auto;
+    padding-top: 12px;
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.015em;
+}
+
+.listing-price small {
+    color: var(--muted);
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 400;
+    letter-spacing: 0;
+}
+
+/* Photos from the photo() macro, and fallbacks when a file is missing. */
+.photo {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    background: var(--mist);
+    border-radius: var(--radius);
+}
+
+.photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photo-failed img {
+    visibility: hidden;
+}
+
+.photo-failed::after {
+    content: attr(data-label);
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    color: var(--brand);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    text-align: center;
+}
+
+.photo-cassava img {
+    object-position: center 80%;
+}
+
+.media-placeholder {
+    display: none;
+}
+
+.media-missing img {
+    visibility: hidden;
+}
+
+.media-missing .media-placeholder {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 12px;
+    background: var(--mist);
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.pagination {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 28px;
+    color: var(--muted);
+    font-size: 0.92rem;
+}
+
+.pagination [aria-disabled="true"] {
+    opacity: 0.5;
+}
+
+/* ---------- 10. Marketplace filters ---------- */
+.filter-panel {
+    margin-bottom: 20px;
+    padding: 20px 20px 14px;
+}
+
+.filter-row {
+    display: grid;
+    grid-template-columns: 2fr repeat(5, minmax(0, 1fr)) auto;
+    align-items: end;
+    gap: 12px;
+}
+
+.filter-row .field {
+    margin-bottom: 0;
+    min-width: 0;
+}
+
+/* Same height for every label, with or without a "Soon" tag, so the boxes line up. */
+.filter-row .field label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 26px;
+    white-space: nowrap;
+}
+
+.filter-row .tag {
+    margin-left: 0;
+    font-size: 0.62rem;
+}
+
+.filter-row .button {
+    min-height: 46px;
+}
+
+.filter-extra {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 16px;
+    margin-top: 14px;
+}
+
+.filter-extra .checkbox {
+    color: var(--muted);
+    cursor: not-allowed;
+}
+
+.filter-note {
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.filter-errors .field-error {
+    margin-top: 10px;
+}
+
+.results-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 14px;
+    margin-bottom: 16px;
+}
+
+/* ---------- 11. Listing details ---------- */
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    align-items: start;
+    gap: 24px;
+}
+
+.gallery-stage {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--ink);
+    border-radius: var(--radius);
+}
+
+.gallery-item {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+}
+
+.gallery-item[hidden] {
+    display: none;
+}
+
+.gallery-item img,
+.gallery-item video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.gallery-empty {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    color: var(--footer-text);
+    font-weight: 600;
+}
+
+.gallery-thumbs {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+
+.gallery-thumb {
+    position: relative;
+    flex: 0 0 84px;
+    width: 84px;
+    height: 64px;
+    padding: 0;
+    overflow: hidden;
+    background: var(--ink);
+    border: 3px solid transparent;
+    border-radius: var(--radius-small);
+    cursor: pointer;
+}
+
+.gallery-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.gallery-thumb[aria-current="true"] {
+    border-color: var(--ochre);
+}
+
+.gallery-thumb-video {
+    display: grid;
+    place-items: center;
+    color: var(--white);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.gallery-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.gallery-nav button {
+    padding: 6px 10px;
+    background: none;
+    border: 0;
+    border-radius: var(--radius-small);
+    color: var(--brand);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.gallery-nav button:hover {
+    background: var(--mist);
+}
+
+.gallery-nav button[disabled] {
+    color: var(--muted);
+    cursor: default;
+    opacity: 0.5;
+}
+
+.detail-summary h1 {
+    margin-top: 10px;
+}
+
+.detail-location {
+    margin-top: 6px;
+    color: var(--muted);
+}
+
+.detail-price {
+    margin-top: 16px;
+    font-family: var(--font-heading);
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    line-height: 1.1;
+}
+
+.detail-price small {
+    color: var(--muted);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0;
+}
+
+.facts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 20px;
+    margin: 20px 0;
+    padding-block: 16px;
+    border-block: 1px solid var(--line);
+}
+
+.facts-grid dt {
+    color: var(--muted);
+    font-size: 0.82rem;
+}
+
+.facts-grid dd {
+    margin: 2px 0 0;
+    font-weight: 600;
+}
+
+.order-panel {
+    display: grid;
+    gap: 10px;
+    padding: 18px;
+    background: var(--mist);
+    border-radius: var(--radius);
+}
+
+.order-panel h2 {
+    font-size: 1.1rem;
+}
+
+.order-panel p {
+    color: var(--muted);
+    font-size: 0.93rem;
+}
+
+.contact-seller {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 14px;
+    margin-top: 16px;
+}
+
+.owner-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.detail-panels {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    align-items: start;
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.seller-since {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.seller-about {
+    margin-top: 12px;
+}
+
+/* ---------- 12. Login and sign-up ---------- */
+.auth-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: stretch;
+    gap: 32px;
+}
+
+.auth-panel {
+    padding: 32px;
+}
+
+.auth-panel h1 {
+    margin-bottom: 6px;
+}
+
+.auth-intro {
+    margin-bottom: 22px;
+    color: var(--muted);
+}
+
+.auth-switch {
+    margin-top: 18px;
+    color: var(--muted);
+    text-align: center;
+}
+
+/* Tall photo card with a dark gradient and white text at the bottom. */
+.auth-photo-card {
+    position: sticky;
+    top: calc(var(--header-height) + 24px);
+    min-height: 560px;
+    max-height: calc(100vh - var(--header-height) - 48px);
+    overflow: hidden;
+    border-radius: var(--radius);
+}
+
+.auth-photo-card .photo {
+    position: absolute;
+    inset: 0;
+    aspect-ratio: auto;
+    border-radius: 0;
+}
+
+.auth-photo-text {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 120px 32px 32px;
+    background: linear-gradient(to top, rgba(14, 28, 20, 0.88), rgba(14, 28, 20, 0));
+    color: var(--white);
+}
+
+.auth-photo-text h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+}
+
+.auth-photo-text p {
+    margin-top: 8px;
+    opacity: 0.85;
+}
+
+/* Forgot and reset password: one centred 460px panel. */
+.auth-single {
+    width: min(460px, 100%);
+    margin-inline: auto;
+}
+
+/* "I want to" choice cards: Buy or Sell. */
+.choice-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 22px;
+}
+
+.choice-label {
+    margin-bottom: 8px;
+    font-size: 0.93rem;
+    font-weight: 600;
+}
+
+.choice-card {
+    display: block;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 2px solid var(--line);
+    border-radius: var(--radius);
+    color: var(--text);
+    text-decoration: none;
+}
+
+.choice-card:hover {
+    border-color: var(--brand-hover);
+}
+
+.choice-card strong {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+}
+
+.choice-card span {
+    display: block;
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.choice-card[aria-current="true"] {
+    background: var(--mist);
+    border-color: var(--brand);
+}
+
+/* ---------- 13. Dashboards ---------- */
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    align-items: start;
+    gap: 24px;
+}
+
+.dashboard-side {
+    display: grid;
+    gap: 24px;
+    min-width: 0;
+}
+
+.panel-note {
+    margin-top: -6px;
+    margin-bottom: 14px;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.listing-rows > li {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 16px;
+    padding-block: 16px;
+    border-top: 1px solid var(--line);
+}
+
+.listing-rows > li:first-child {
+    border-top: 0;
+    padding-top: 0;
+}
+
+.row-thumb {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    overflow: hidden;
+    background: var(--mist);
+    border-radius: var(--radius-small);
+}
+
+.row-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.row-thumb .media-placeholder {
+    font-size: 0.75rem;
+}
+
+.row-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+}
+
+.row-top h3 a {
+    color: var(--text);
+}
+
+.row-info {
+    margin-top: 4px;
+    font-size: 0.92rem;
+}
+
+.row-description {
+    display: -webkit-box;
+    margin-top: 4px;
+    overflow: hidden;
+    color: var(--muted);
+    font-size: 0.9rem;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    white-space: pre-line;
+}
+
+.row-meta {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 0.82rem;
+}
+
+.row-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.row-actions form {
+    margin: 0;
+}
+
+.quick-actions {
+    display: grid;
+    gap: 8px;
+}
+
+.quick-actions a {
+    display: block;
+    padding: 12px 14px;
+    background: var(--field);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-small);
+    color: var(--muted);
+    font-size: 0.88rem;
+    text-decoration: none;
+}
+
+.quick-actions a:hover {
+    border-color: var(--brand);
+}
+
+.quick-actions strong {
+    display: block;
+    color: var(--brand);
+    font-size: 0.98rem;
+}
+
+.form-panel {
+    margin-top: 24px;
+}
+
+.form-panel form {
+    max-width: 760px;
+}
+
+.form-panel-intro {
+    margin: -6px 0 18px;
+    color: var(--muted);
+}
+
+/* ---------- 14. Photo and video uploads ---------- */
+.media-field {
+    min-width: 0;
+    margin-inline: 0;
+    padding: 0;
+    border: 0;
+}
+
+.media-field legend {
+    padding: 0;
+}
+
+/* With JavaScript the file input is hidden (still keyboard-usable) and the
+   dashed box opens it instead. */
+.js .media-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.media-picker {
+    display: none;
+}
+
+.js .media-picker {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    padding: 18px 16px;
+    background: var(--field);
+    border: 2px dashed var(--line);
+    border-radius: var(--radius-small);
+    color: var(--brand);
+    text-align: center;
+    cursor: pointer;
+}
+
+.js .media-picker:hover {
+    border-color: var(--brand);
+}
+
+.media-input:focus-visible + .media-picker {
+    outline: 3px solid var(--ochre);
+    outline-offset: 2px;
+}
+
+.media-input[aria-invalid="true"] + .media-picker {
+    border-color: var(--danger);
+}
+
+.media-picker-title {
+    font-weight: 600;
+}
+
+.media-picker-hint {
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 400;
+}
+
+.media-message:empty {
+    display: none;
+}
+
+.media-message {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 0.88rem;
+}
+
+.media-message-error {
+    color: var(--danger);
+    font-weight: 600;
+}
+
+.media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(110px, 100%), 1fr));
+    gap: 10px;
+    margin-block: 10px;
+}
+
+.media-grid:empty {
+    display: none;
+}
+
+.media-grid-video {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.media-item {
+    position: relative;
+    overflow: hidden;
+    background: var(--field);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-small);
+}
+
+.media-item img,
+.media-item video {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    background: var(--mist);
+}
+
+.media-grid-video .media-item video {
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
+    background: var(--ink);
+}
+
+.media-caption {
+    padding: 6px 8px 0;
+    overflow: hidden;
+    color: var(--muted);
+    font-size: 0.78rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.media-remove,
+.field .media-remove-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: calc(100% - 12px);
+    margin: 6px;
+    padding: 4px 8px;
+    background: var(--surface);
+    border: 2px solid var(--danger);
+    border-radius: var(--radius-small);
+    color: var(--danger);
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.media-remove:hover,
+.media-remove-toggle:hover {
+    background: var(--danger-bg);
+}
+
+.media-remove-toggle input {
+    accent-color: var(--danger);
+}
+
+.media-removing img,
+.media-removing video {
+    opacity: 0.35;
+}
+
+.media-removing::after {
+    content: "Will be removed";
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    padding: 2px 8px;
+    background: var(--danger);
+    border-radius: 999px;
+    color: var(--white);
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+
+/* ---------- 15. Small screens ---------- */
+/* The sidebar takes 252px, so the 7 filters only fit on one row above ~1360px. */
+@media (max-width: 1360px) {
+    .filter-row {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .filter-row .filter-search {
+        grid-column: span 3;
+    }
+}
+
+@media (max-width: 960px) {
+    .stat-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .dashboard-grid,
+    .detail-grid,
+    .detail-panels {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* The photo card beside login and sign-up forms hides below 860px. */
+@media (max-width: 860px) {
+    .auth-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .auth-photo-card {
+        display: none;
+    }
+
+    .auth-layout .auth-panel {
+        width: min(560px, 100%);
+        margin-inline: auto;
+    }
+}
+
+@media (max-width: 640px) {
+    .page {
+        padding-block: 24px 48px;
+    }
+
+    .panel,
+    .auth-panel {
+        padding: 20px;
+    }
+
+    .filter-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .filter-row .filter-search,
+    .filter-row .filter-submit {
+        grid-column: span 2;
+    }
+
+    .page-header {
+        align-items: flex-start;
+    }
+
+    .page-actions,
+    .page-actions .button {
+        width: 100%;
+    }
+
+    .empty-state {
+        padding: 32px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .stat-grid,
+    .choice-cards,
+    .facts-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .field-row {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .listing-rows > li {
+        grid-template-columns: 72px minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    .row-thumb {
+        width: 72px;
+        height: 72px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    .button,
+    .listing-card,
+    .menu-icon,
+    .menu-icon::before,
+    .menu-icon::after {
+        transition: none;
+    }
+
+    .listing-card:hover,
+    .listing-card:focus-within {
+        transform: none;
+    }
+
+    .toast {
+        animation: none;
+    }
+}
+
+/* ---------- Terms page ---------- */
+.terms h2 {
+    margin-block: 24px 8px;
+    font-size: 1.15rem;
+}
+
+.terms h2:first-of-type {
+    margin-top: 8px;
+}
+
+.buyer-shortcuts {
+    margin-top: 14px;
+}
+
+/* ---------- 16. Theme toggle ---------- */
+.theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 40px;
+    min-height: 40px;
+    padding: 8px;
+    background: none;
+    border: 0;
+    border-radius: var(--radius-small);
+    color: var(--white);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.theme-toggle svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Light mode shows the moon (switch to dark); dark mode shows the sun. */
+.icon-sun,
+.label-light,
+[data-theme="dark"] .icon-moon,
+[data-theme="dark"] .label-dark {
+    display: none;
+}
+
+[data-theme="dark"] .icon-sun,
+[data-theme="dark"] .label-light {
+    display: inline;
+}
+
+/* The toggle sits beside the menu button; on wide screens after the links. */
+.header-tools {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    order: 3;
+}
+
+.site-nav {
+    order: 2;
+    margin-left: auto;
+}
+
+@media (max-width: 820px) {
+    .header-tools {
+        order: 2;
+    }
+}
+
+/* ---------- 17. Logged-in layout: sidebar and content ---------- */
+.app-shell {
+    display: grid;
+    grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+    min-height: 100vh;
+}
+
+.app-main {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.app-main main {
+    flex: 1;
+}
+
+.sidebar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 20px 14px;
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--line);
+}
+
+.sidebar-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: 8px;
+}
+
+.sidebar-brand {
+    color: var(--brand);
+    font-family: var(--font-heading);
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    text-decoration: none;
+}
+
+.sidebar-close {
+    display: none;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background: none;
+    border: 0;
+    border-radius: var(--radius-small);
+    color: var(--text);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.sidebar-close:hover {
+    background: var(--mist);
+}
+
+.sidebar-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: var(--field);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+}
+
+.sidebar-avatar {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    background: var(--primary);
+    border-radius: 50%;
+    color: var(--white);
+    font-family: var(--font-heading);
+    font-weight: 800;
+}
+
+.sidebar-user-text {
+    min-width: 0;
+}
+
+.sidebar-user-text strong,
+.sidebar-user-text span {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sidebar-user-text strong {
+    font-size: 0.95rem;
+}
+
+.sidebar-user-text span {
+    color: var(--muted);
+    font-size: 0.8rem;
+}
+
+.sidebar-nav {
+    display: grid;
+    gap: 2px;
+}
+
+.sidebar-nav a,
+.sidebar-soon,
+.sidebar-logout {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    background: none;
+    border: 0;
+    border-radius: var(--radius-small);
+    color: var(--text);
+    font: inherit;
+    font-weight: 500;
+    text-align: left;
+    text-decoration: none;
+}
+
+.sidebar-nav svg,
+.sidebar-logout svg {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.sidebar-nav a:hover,
+.sidebar-logout:hover {
+    background: var(--mist);
+}
+
+/* The current page: tinted background, bold text and a green bar on the left. */
+.sidebar-nav a[aria-current="page"] {
+    background: var(--sidebar-active);
+    color: var(--brand);
+    font-weight: 700;
+}
+
+.sidebar-nav a[aria-current="page"]::before {
+    content: "";
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    left: -14px;
+    width: 4px;
+    background: var(--primary);
+    border-radius: 0 4px 4px 0;
+}
+
+.sidebar-soon {
+    color: var(--muted);
+    cursor: default;
+}
+
+.sidebar-soon .tag {
+    margin-left: auto;
+}
+
+.sidebar-bottom {
+    display: grid;
+    gap: 2px;
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+}
+
+.sidebar-bottom form {
+    margin: 0;
+}
+
+.sidebar-logout {
+    cursor: pointer;
+}
+
+/* The sidebar's theme toggle is a full-width row, like the links. */
+.sidebar .theme-toggle {
+    justify-content: flex-start;
+    gap: 12px;
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-weight: 500;
+}
+
+.sidebar .theme-toggle:hover {
+    background: var(--mist);
+}
+
+/* Top bar with the menu button: only on smaller screens. */
+.app-topbar {
+    display: none;
+}
+
+.app-backdrop {
+    display: none;
+}
+
+.app-menu-button {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    background: none;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: var(--radius-small);
+    color: var(--white);
+    cursor: pointer;
+}
+
+@media (max-width: 960px) {
+    .app-shell {
+        display: block;
+    }
+
+    .app-topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-height: var(--header-height);
+        padding-inline: 16px;
+        background: var(--leaf);
+        color: var(--white);
+    }
+
+    .app-topbar .brand {
+        flex: 1;
+    }
+
+    /* The sidebar slides in from the left. While closed it is hidden from
+       the keyboard and screen readers too (visibility: hidden). */
+    .sidebar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: min(300px, 86vw);
+        height: auto;
+        box-shadow: var(--shadow-lift);
+        transform: translateX(-100%);
+        visibility: hidden;
+        transition: transform 0.22s ease, visibility 0s linear 0.22s;
+    }
+
+    .sidebar-open .sidebar {
+        transform: none;
+        visibility: visible;
+        transition: transform 0.22s ease;
+    }
+
+    .sidebar-close {
+        display: grid;
+        place-items: center;
+    }
+
+    .sidebar-open .app-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 25;
+        display: block;
+        background: rgba(17, 21, 19, 0.55);
+    }
+
+    .sidebar-nav a[aria-current="page"]::before {
+        left: -14px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sidebar,
+    .sidebar-open .sidebar {
+        transition: none;
+    }
+}
+
+/* ---------- 18. Dark theme adjustments ----------
+   Most colours change through the tokens at the top. These few parts need
+   a little more help in dark mode. */
+[data-theme="dark"] .site-header,
+[data-theme="dark"] .app-topbar {
+    background: #142a1d;
+}
+
+[data-theme="dark"] .page-home .site-header {
+    background: transparent;
+}
+
+[data-theme="dark"] .toast {
+    background: #2f7a4e;
+}
+
+[data-theme="dark"] .toast.alert-error {
+    background: #8a1c16;
+}
+
+[data-theme="dark"] .gallery-stage,
+[data-theme="dark"] .gallery-thumb {
+    background: #0b0e0c;
+}
+
+[data-theme="dark"] .button[disabled],
+[data-theme="dark"] .button[aria-disabled="true"] {
+    background: var(--mist);
+    border-color: var(--line);
+    color: var(--muted);
+}
+
+[data-theme="dark"] .confirm-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.65);
+}
+
+/* Text boxes and dropdowns in the filter row are exactly the same height. */
+.filter-row input,
+.filter-row select {
+    height: 46px;
+}

@@ -1,0 +1,70 @@
+{#
+    Form field building blocks shared by the login, sign-up and password pages.
+    They produce the same markup as the dashboard's listing form: a .field
+    with a label, an optional hint and an optional error message.
+
+    Usage:
+        {% from "_form.html" import field, password_field, textarea_field %}
+        {{ field("email", "Email address", form.email, errors.email, type="email", autocomplete="email") }}
+#}
+
+{# Links the input to its hint and error text, so screen readers read them out. #}
+{% macro _described_by(name, hint, error) -%}
+    {%- set ids = [] -%}
+    {%- if hint %}{% set ids = ids + [name ~ '-hint'] %}{% endif -%}
+    {%- if error %}{% set ids = ids + [name ~ '-error'] %}{% endif -%}
+    {%- if ids %} aria-describedby="{{ ids|join(' ') }}"{% endif -%}
+    {%- if error %} aria-invalid="true"{% endif -%}
+{%- endmacro %}
+
+{% macro _messages(name, hint, error) %}
+    {% if hint %}<p class="field-hint" id="{{ name }}-hint">{{ hint }}</p>{% endif %}
+    {% if error %}<p class="field-error" id="{{ name }}-error">{{ error }}</p>{% endif %}
+{% endmacro %}
+
+{% macro field(name, label, value="", error="", type="text", autocomplete="", hint="", maxlength=100) %}
+<div class="field">
+    <label for="{{ name }}">{{ label }}</label>
+    <input id="{{ name }}" name="{{ name }}" type="{{ type }}" value="{{ value or '' }}" required
+           {%- if autocomplete %} autocomplete="{{ autocomplete }}"{% endif %}
+           {%- if maxlength %} maxlength="{{ maxlength }}"{% endif %}
+           {{- _described_by(name, hint, error) }}>
+    {{ _messages(name, hint, error) }}
+</div>
+{% endmacro %}
+
+{#
+    A password input with a Show/Hide button. The button starts hidden and
+    script.js reveals it, so visitors without JavaScript never see a button
+    that does nothing. match="password" makes the browser check that this
+    field is the same as the "password" field before submitting.
+#}
+{% macro password_field(name, label, error="", autocomplete="current-password", hint="", minlength=None, match="") %}
+<div class="field">
+    <label for="{{ name }}">{{ label }}</label>
+    <div class="password-input">
+        <input id="{{ name }}" name="{{ name }}" type="password" autocomplete="{{ autocomplete }}" maxlength="128" required
+               {%- if minlength %} minlength="{{ minlength }}"{% endif %}
+               {%- if match %} data-must-match="{{ match }}"{% endif %}
+               {{- _described_by(name, hint, error) }}>
+        <button class="password-toggle" type="button" data-password-toggle="{{ name }}" aria-controls="{{ name }}" aria-pressed="false" hidden>Show</button>
+    </div>
+    {{ _messages(name, hint, error) }}
+</div>
+{% endmacro %}
+
+{% macro textarea_field(name, label, value="", error="", hint="", maxlength=1000, rows=4) %}
+<div class="field">
+    <label for="{{ name }}">{{ label }}</label>
+    <textarea id="{{ name }}" name="{{ name }}" rows="{{ rows }}" maxlength="{{ maxlength }}" required
+              {{- _described_by(name, hint, error) }}>{{ value or '' }}</textarea>
+    {{ _messages(name, hint, error) }}
+</div>
+{% endmacro %}
+
+{# Shown at the top of a form when the server found problems. #}
+{% macro error_summary(errors) %}
+    {% if errors %}
+        <p class="alert alert-error" role="alert">Please fix the {{ "problem" if errors|length == 1 else errors|length ~ " problems" }} highlighted below.</p>
+    {% endif %}
+{% endmacro %}

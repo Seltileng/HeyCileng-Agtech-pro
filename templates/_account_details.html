@@ -1,0 +1,34 @@
+{# Shared account summary for the seller and buyer dashboards. #}
+<section class="panel" id="account">
+    <h2>Your account</h2>
+    <dl class="details-list">
+        <div>
+            <dt>Full name</dt>
+            <dd>{{ g.user.full_name }}</dd>
+        </div>
+        {% if g.user.business_name %}
+            <div>
+                <dt>{{ "Business name" if g.user.account_type == "seller" else "Company name" }}</dt>
+                <dd>{{ g.user.business_name }}</dd>
+            </div>
+        {% endif %}
+        <div>
+            <dt>Account type</dt>
+            <dd>{{ g.user.account_type|capitalize }}</dd>
+        </div>
+        <div>
+            <dt>Email address</dt>
+            <dd>{{ g.user.email }}</dd>
+        </div>
+        <div>
+            <dt>Phone number</dt>
+            <dd>{{ g.user.phone }}</dd>
+        </div>
+        {% if g.user.business_description %}
+            <div>
+                <dt>About the business</dt>
+                <dd class="pre-line">{{ g.user.business_description }}</dd>
+            </div>
+        {% endif %}
+    </dl>
+</section>

@@ -1,0 +1,115 @@
+{% extends "layout_app.html" %}
+
+{% block title %}Seller dashboard | HeyCileng Agtech{% endblock %}
+
+{#
+    Every number here is worked out from the seller's own listings, which
+    app.py already sends as "listings". Nothing is estimated.
+
+    Every listing is live as soon as it is added, so "Available" equals the
+    total. Reserved and Sold are not tracked yet, so they show "Coming soon".
+#}
+{% block content %}
+{% set total_listings = listings|length %}
+{% set total_quantity = listings|sum(attribute="quantity_kg") %}
+{% set with_photos = listings|selectattr("photo_count")|list|length %}
+{% set first_name = g.user.full_name.split()[0] %}
+<div class="container page">
+    <div class="page-header">
+        <div>
+            <h1>Seller dashboard</h1>
+            <p class="page-subtitle">Welcome, {{ first_name }}.
+                {% if g.user.business_name %}Manage {{ g.user.business_name }}'s listings here.{% else %}Manage your listings here.{% endif %}</p>
+        </div>
+        <div class="page-actions">
+            <a class="button button-primary" href="#add-listing" data-focus-target="waste_type">+ New listing</a>
+        </div>
+    </div>
+
+    <h2 class="visually-hidden">Your numbers</h2>
+    <ul class="stat-grid">
+        <li class="stat-tile">
+            <p class="stat-number">{{ total_listings }}</p>
+            <p class="stat-label">Total listings</p>
+        </li>
+        <li class="stat-tile">
+            <p class="stat-number">{{ total_listings }}</p>
+            <p class="stat-label">Available</p>
+        </li>
+        <li class="soon-card">
+            <p class="stat-number">–</p>
+            <p class="stat-label">Reserved <span class="tag tag-soon">Coming soon</span></p>
+        </li>
+        <li class="soon-card">
+            <p class="stat-number">–</p>
+            <p class="stat-label">Sold <span class="tag tag-soon">Coming soon</span></p>
+        </li>
+    </ul>
+
+    <div class="dashboard-grid">
+        <section class="panel" id="my-listings">
+            <div class="panel-heading">
+                <h2>My listings ({{ total_listings }})</h2>
+            </div>
+            {% if listings %}
+                <p class="panel-note">{{ total_quantity|amount }} kg available in total · {{ with_photos }} of {{ total_listings }} listings have photos</p>
+                <ul class="listing-rows">
+                    {% for listing in listings %}
+                        <li>
+                            <a class="row-thumb {% if not listing.cover_photo %}media-missing{% endif %}" href="{{ url_for('listing_detail', listing_id=listing.id) }}" tabindex="-1" aria-hidden="true">
+                                {% if listing.cover_photo %}
+                                    <img src="{{ media_url('image', listing.cover_photo) }}" alt="" loading="lazy"
+                                         onerror="this.parentElement.classList.add('media-missing')">
+                                {% endif %}
+                                <span class="media-placeholder">No photo yet</span>
+                            </a>
+                            <div>
+                                <div class="row-top">
+                                    <h3><a href="{{ url_for('listing_detail', listing_id=listing.id) }}">{{ listing.waste_type }}</a></h3>
+                                    <span class="tag tag-live">Live</span>
+                                    {% if not listing.photo_count %}<span class="tag tag-soon">No photos yet</span>{% endif %}
+                                </div>
+                                <p class="row-info">{{ listing.quantity_kg|amount }} kg · {{ listing.location }} · <strong>{{ listing.price_per_kg|money }}</strong> per kg</p>
+                                <p class="row-description">{{ listing.description }}</p>
+                                <p class="row-meta">Listed {{ listing.created_at|date }} · {{ listing.photo_count }} photo{{ "" if listing.photo_count == 1 else "s" }}{% if listing.video_count %}, 1 video{% endif %}</p>
+                                <div class="row-actions">
+                                    <a class="button button-small button-secondary" href="{{ url_for('edit_listing', listing_id=listing.id) }}">Edit</a>
+                                    <a class="button button-small button-secondary" href="{{ url_for('listing_detail', listing_id=listing.id) }}">View</a>
+                                    {% include "_delete_listing_form.html" %}
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="empty-state">
+                    <h2>You have no listings yet</h2>
+                    <p>Add your first listing and buyers will see it in the marketplace straight away.</p>
+                    <a class="button button-primary" href="#add-listing" data-focus-target="waste_type">Add your first listing</a>
+                </div>
+            {% endif %}
+        </section>
+
+        <div class="dashboard-side">
+            <section class="panel">
+                <h2>Quick actions</h2>
+                <ul class="quick-actions">
+                    <li><a href="#add-listing" data-focus-target="waste_type"><strong>Add a new listing</strong>Waste type, quantity, price and photos</a></li>
+                    <li><a href="{{ url_for('marketplace') }}"><strong>View marketplace</strong>See your listings as buyers do</a></li>
+                    <li><a href="#my-listings" data-focus-target=""><strong>Manage listings</strong>Edit, update photos or delete</a></li>
+                </ul>
+            </section>
+
+            {% include "_account_details.html" %}
+        </div>
+    </div>
+
+    <section class="panel form-panel" id="add-listing">
+        <h2>New listing</h2>
+        <p class="form-panel-intro">Buyers see your listing in the marketplace as soon as you add it. Clear photos help it stand out.</p>
+        {% with action=url_for('create_listing') ~ '#add-listing', submit_label='Add listing' %}
+            {% include "_listing_form.html" %}
+        {% endwith %}
+    </section>
+</div>
+{% endblock %}

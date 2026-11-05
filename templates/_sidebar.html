@@ -1,0 +1,70 @@
+{#
+    Left-hand sidebar for logged-in pages. Items depend on the account type.
+    Only links with working pages are links; "My orders" is shown as coming
+    soon because ordering is not built yet. Notifications and Earnings are
+    left out because HeyCileng does not track them.
+#}
+{% set endpoint = request.endpoint %}
+{% set dashboard = g.user.account_type ~ '_dashboard' %}
+<aside class="sidebar" id="app-sidebar" aria-label="Account menu">
+    <div class="sidebar-top">
+        <a class="sidebar-brand" href="{{ url_for('index') }}">HeyCileng</a>
+        <button class="sidebar-close" type="button" data-sidebar-close aria-label="Close menu">&times;</button>
+    </div>
+
+    <div class="sidebar-user">
+        <span class="sidebar-avatar" aria-hidden="true">{{ (g.user.business_name or g.user.full_name)[:1]|upper }}</span>
+        <span class="sidebar-user-text">
+            <strong>{{ g.user.business_name or g.user.full_name }}</strong>
+            <span>{{ g.user.account_type|capitalize }} account</span>
+        </span>
+    </div>
+
+    <nav aria-label="Main">
+        <ul class="sidebar-nav">
+            <li>
+                <a href="{{ url_for(dashboard) }}" {% if endpoint == dashboard %}aria-current="page"{% endif %}>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+                    Overview
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('marketplace') }}" {% if endpoint in ('marketplace', 'listing_detail') %}aria-current="page"{% endif %}>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l1.5-5h15L21 9"/><path d="M4 9v11h16V9"/><path d="M9 20v-6h6v6"/></svg>
+                    Marketplace
+                </a>
+            </li>
+            {% if g.user.account_type == "seller" %}
+                <li>
+                    <a href="{{ url_for('seller_dashboard', _anchor='my-listings') }}" {% if endpoint == 'edit_listing' %}aria-current="page"{% endif %}>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+                        My listings
+                    </a>
+                </li>
+            {% endif %}
+            <li>
+                <span class="sidebar-soon" aria-disabled="true">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h15l-1.5 9h-12z"/><path d="M6 6L5 3H2"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/></svg>
+                    My orders <span class="tag tag-soon">Soon</span>
+                </span>
+            </li>
+            <li>
+                <a href="{{ url_for(dashboard, _anchor='account') }}">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
+                    Profile
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="sidebar-bottom">
+        {% with show_label = true %}{% include "_theme_toggle.html" %}{% endwith %}
+        <form method="post" action="{{ url_for('logout') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="sidebar-logout" type="submit">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4h4v16h-4"/><path d="M10 8l-4 4 4 4"/><path d="M6 12h10"/></svg>
+                Log out
+            </button>
+        </form>
+    </div>
+</aside>

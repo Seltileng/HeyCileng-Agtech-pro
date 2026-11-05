@@ -1,0 +1,26 @@
+{#
+    Shows a photo from static/images/photos/ with rounded corners.
+
+    Each photo has two files: "name.jpg" (large) and "name-small.jpg" (for phones).
+    The browser picks the right one using srcset and sizes.
+
+    If the photo fails to load, onerror adds the "photo-failed" class, and the CSS
+    shows a plain green panel with the label text instead of a broken image icon.
+
+    Usage:
+        {% from "_photo.html" import photo %}
+        {{ photo("rice-husks", "A heap of rice husks", 922, 613, 640, sizes="(min-width: 960px) 30vw, 100vw") }}
+#}
+{% macro photo(name, alt, width, height, small_width, sizes="100vw", label="", class="", eager=false) %}
+<div class="photo {{ class }}" data-label="{{ label or alt }}">
+    <img src="{{ url_for('static', filename='images/photos/' ~ name ~ '.jpg') }}"
+         srcset="{{ url_for('static', filename='images/photos/' ~ name ~ '-small.jpg') }} {{ small_width }}w,
+                 {{ url_for('static', filename='images/photos/' ~ name ~ '.jpg') }} {{ width }}w"
+         sizes="{{ sizes }}"
+         width="{{ width }}" height="{{ height }}"
+         alt="{{ alt }}"
+         {% if eager %}fetchpriority="high"{% else %}loading="lazy"{% endif %}
+         decoding="async"
+         onerror="this.parentElement.classList.add('photo-failed')">
+</div>
+{% endmacro %}

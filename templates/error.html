@@ -1,0 +1,18 @@
+{% extends "layout_app.html" if g.user else "layout_public.html" %}
+
+{% set heading = {403: "Not allowed", 404: "Page not found", 413: "Files too large"}.get(error.code, "Something went wrong") %}
+
+{% block title %}{{ heading }} | HeyCileng Agtech{% endblock %}
+
+{% block content %}
+<div class="container page">
+    <section class="panel auth-panel auth-single">
+        <p class="muted">Error {{ error.code }}</p>
+        <h1>{{ heading }}</h1>
+        <p class="auth-intro">{{ error.description }}</p>
+        <a class="button button-primary button-block" href="{{ url_for('marketplace') if g.user else url_for('index') }}">
+            {{ "Go to the marketplace" if g.user else "Go to the homepage" }}
+        </a>
+    </section>
+</div>
+{% endblock %}

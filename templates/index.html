@@ -1,0 +1,154 @@
+{% extends "layout_public.html" %}
+{% from "_photo.html" import photo %}
+{% from "_form.html" import field, textarea_field, error_summary %}
+
+{% block title %}HeyCileng Agtech | Farm waste marketplace for Nigeria{% endblock %}
+{% block body_class %}page-home{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <img class="hero-photo" src="{{ url_for('static', filename='images/photos/hero-rice-harvest.jpg') }}"
+         srcset="{{ url_for('static', filename='images/photos/hero-rice-harvest-small.jpg') }} 960w,
+                 {{ url_for('static', filename='images/photos/hero-rice-harvest.jpg') }} 1400w"
+         sizes="100vw" width="1400" height="933" alt="" fetchpriority="high">
+    <div class="landing-container hero-content">
+        <h1>Farm remnants and spoils, back to work.</h1>
+        <p class="hero-text">Sell your crop residues and processing waste to the industries that need it, or buy dependable biomass for feed, fertilizer and energy. Giving waste another market. All across Nigeria.</p>
+        <div class="hero-actions">
+            <a class="button button-accent" href="{{ url_for('marketplace') }}">Buy biomass</a>
+            {% if g.user %}
+                <a class="button button-light-outline" href="{{ url_for(g.user.account_type ~ '_dashboard') }}">Go to my dashboard</a>
+            {% else %}
+                <a class="button button-light-outline" href="{{ url_for('register_account', role='seller') }}">Sell your biomass</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="stats-band" aria-label="Why it matters">
+    <div class="landing-container">
+        <ul class="stats-row">
+            <li><strong>30–40%</strong><span>of harvests are lost after the field</span></li>
+            <li><strong>15 million t</strong><span>of wet cassava peels are produced in Nigeria each year</span></li>
+            <li><strong>Most</strong><span>of those peels are dumped to rot or burned</span></li>
+        </ul>
+        <p class="stats-source">Sources:
+            <a href="https://www.thisdaylive.com/2026/09/29/tackling-food-waste-and-loss/">ThisDay</a> (post-harvest loss) ·
+            <a href="https://www.ilri.org/knowledge/publications/turning-waste-wealth-harnessing-potential-cassava-peels-nutritious-animal">ILRI</a> (cassava peels)</p>
+    </div>
+</section>
+
+<section class="landing-section" id="about">
+    <div class="landing-container split">
+        <div class="split-text">
+            <h2>Waste for one business is raw material for another.</h2>
+            <p>Every harvest leaves behind husks, stalks, peels and shells. Much of it is burned or dumped, while feed mills, fertilizer makers and bio-energy companies are looking for exactly these materials.</p>
+            <p>HeyCileng brings both sides together in one marketplace: sellers list what they have, and buyers find it by type, location and price, then deal with the seller directly.</p>
+        </div>
+        {{ photo("farmers-carrying-harvest", "Farmers carrying bundles of harvested crops on their heads as they walk home from the field", 1100, 733, 640,
+                 sizes="(min-width: 860px) 540px, calc(100vw - 32px)", label="Farmers at harvest", class="split-photo") }}
+    </div>
+</section>
+
+<section class="landing-section landing-white" id="what-you-can-buy">
+    <div class="landing-container">
+        <div class="section-head">
+            <h2>What you can buy</h2>
+            <p class="muted">Agricultural byproducts listed by farms and processors.</p>
+        </div>
+        <ul class="buy-grid">
+            {% for item in [
+                ("cassava-peels", 825, 1238, 480, "Cassava peels", "Livestock feed and biogas, once dried.", "cassava", "Women peeling cassava, with a pile of cassava peels beside them", "photo-cassava"),
+                ("rice-husks", 922, 613, 640, "Rice husks", "Boiler fuel, briquettes and poultry bedding.", "husk", "A heap of golden rice husks", ""),
+                ("sugarcane-bagasse", 1100, 825, 640, "Sugarcane bagasse", "Bio-energy, compost and board.", "bagasse", "A pile of shredded sugarcane bagasse fibre", ""),
+                ("maize-stalks", 1100, 733, 640, "Crop stalks", "Animal feed, compost and bio-energy.", "stalk", "A farmer standing among dry maize stalks", ""),
+            ] %}
+                <li class="buy-card">
+                    {{ photo(item[0], item[7], item[1], item[2], item[3], sizes="(min-width: 860px) 260px, (min-width: 520px) 50vw, 100vw", label=item[4], class="buy-photo " ~ item[8]) }}
+                    <h3>{{ item[4] }}</h3>
+                    <p>{{ item[5] }}</p>
+                    <a class="button button-secondary button-small" href="{{ url_for('marketplace', search=item[6]) }}">See listings</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</section>
+
+<section class="landing-section" id="how-it-works">
+    <div class="landing-container">
+        <div class="section-head">
+            <h2>How it works</h2>
+        </div>
+        <ol class="steps">
+            <li>
+                <h3>List</h3>
+                <p>Sellers list their waste with quantity, price per kg, location and photos.</p>
+            </li>
+            <li>
+                <h3>Match</h3>
+                <p>Buyers search by type, location and price, and compare what is on offer.</p>
+            </li>
+            <li>
+                <h3>Order <span class="tag tag-soon">Coming soon</span></h3>
+                <p>For now, buyers call the seller to agree price and collection. Online ordering with Paystack is on its way.</p>
+            </li>
+            <li>
+                <h3>Collect</h3>
+                <p>Collect or arrange delivery, and the waste goes on to its next use.</p>
+            </li>
+        </ol>
+    </div>
+</section>
+
+<section class="landing-section landing-mist" id="sell">
+    <div class="landing-container">
+        <div class="section-head">
+            <h2>Sell your biomass</h2>
+            <p class="muted">Turn what is left after harvest and processing into income.</p>
+        </div>
+        <ul class="sell-grid">
+            <li class="sell-card">
+                <h3>Farmers and cooperatives</h3>
+                <p>Crop stalks, husks and peels left after harvest, sold instead of burned.</p>
+            </li>
+            <li class="sell-card">
+                <h3>Agro-processors</h3>
+                <p>Peels, bagasse and shells from processing, picked up by buyers who use them.</p>
+            </li>
+            <li class="sell-card">
+                <h3>Aggregators and hubs</h3>
+                <p>Collect from many farms and list larger lots for feed, fertilizer and energy buyers.</p>
+            </li>
+        </ul>
+        <div class="sell-actions">
+            {% if g.user %}
+                <a class="button button-accent" href="{{ url_for(g.user.account_type ~ '_dashboard') }}">Go to my dashboard</a>
+            {% else %}
+                <a class="button button-accent" href="{{ url_for('register_account', role='seller') }}">Start selling</a>
+                <p class="muted">Already selling? <a class="text-link" href="{{ url_for('login') }}">Log in</a></p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="landing-section landing-white" id="contact">
+    <div class="landing-container contact-grid">
+        <div>
+            <h2>Questions? Get in touch</h2>
+            <p class="muted contact-intro">Ask about selling your waste, finding raw materials or using your account. The HeyCileng team will reply by email.</p>
+        </div>
+        <form class="panel contact-form" method="post" action="{{ url_for('contact', _anchor='contact') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            {% if contact_errors %}<p class="form-error" role="alert">Please fix the {{ "problem" if contact_errors|length == 1 else contact_errors|length ~ " problems" }} highlighted below.</p>{% endif %}
+            {{ field("name", "Your name", contact.name, contact_errors.name, autocomplete="name") }}
+            {{ field("email", "Email address", contact.email, contact_errors.email, type="email", autocomplete="email", maxlength=254) }}
+            {{ textarea_field("message", "Message", contact.message, contact_errors.message, maxlength=2000, rows=5) }}
+            <button class="button button-dark" type="submit">Send message</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

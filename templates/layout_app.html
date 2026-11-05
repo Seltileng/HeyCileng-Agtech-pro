@@ -1,0 +1,31 @@
+{#
+    Layout for logged-in pages: sidebar on the left, content on the right.
+    Used by the dashboards, marketplace, listing details and edit pages.
+
+    Below 960px the sidebar slides in from the left when the menu button in
+    the top bar is pressed (script.js), over a darkened backdrop.
+#}
+{% extends "base.html" %}
+
+{% block layout %}
+<div class="app-shell">
+    {% include "_sidebar.html" %}
+    <div class="app-backdrop" data-sidebar-close></div>
+
+    <div class="app-main">
+        <header class="app-topbar">
+            <button class="app-menu-button" type="button" data-sidebar-open aria-controls="app-sidebar" aria-expanded="false" aria-label="Open menu">
+                <span class="menu-icon" aria-hidden="true"></span>
+            </button>
+            <a class="brand" href="{{ url_for('index') }}">HeyCileng</a>
+            {% include "_theme_toggle.html" %}
+        </header>
+
+        <main id="main">
+            {% block content %}{% endblock %}
+        </main>
+
+        {% include "_footer.html" %}
+    </div>
+</div>
+{% endblock %}

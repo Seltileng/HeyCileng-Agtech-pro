@@ -1,0 +1,134 @@
+{% extends "layout_app.html" %}
+
+{% block title %}Marketplace | HeyCileng Agtech{% endblock %}
+
+{% block content %}
+{% set filtering = filters.search or filters.location or filters.min_price or filters.max_price %}
+<div class="container page">
+    <div class="page-header">
+        <div>
+            <h1>Agricultural waste marketplace</h1>
+            <p class="page-subtitle">Peels, husks, stalks and manure from farms and processors across Nigeria.</p>
+        </div>
+        {% if g.user.account_type == "seller" %}
+            <div class="page-actions">
+                <a class="button button-primary" href="{{ url_for('seller_dashboard', _anchor='add-listing') }}">+ New listing</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <form class="panel filter-panel" method="get" action="{{ url_for('marketplace') }}">
+        <div class="filter-row">
+            <div class="field filter-search">
+                <label for="search">Search</label>
+                <input id="search" name="search" type="search" maxlength="100" placeholder="e.g. Cassava peels" value="{{ filters.search }}">
+            </div>
+
+            {# Categories and sorting are not built yet, so these are shown but switched off. #}
+            <div class="field">
+                <label for="category">Category <span class="tag tag-soon">Soon</span></label>
+                <select id="category" disabled aria-describedby="soon-note">
+                    <option>All categories</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="location">Location</label>
+                <select id="location" name="location">
+                    <option value="">All locations</option>
+                    {% for place in locations %}
+                        <option value="{{ place.location }}" {% if place.location|lower == filters.location|lower %}selected{% endif %}>{{ place.location }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="min_price">Min price (₦)</label>
+                <input id="min_price" name="min_price" type="text" inputmode="decimal" value="{{ filters.min_price }}"
+                       {%- if errors.min_price %} aria-invalid="true" aria-describedby="min_price-error"{% endif %}>
+            </div>
+
+            <div class="field">
+                <label for="max_price">Max price (₦)</label>
+                <input id="max_price" name="max_price" type="text" inputmode="decimal" value="{{ filters.max_price }}"
+                       {%- if errors.max_price %} aria-invalid="true" aria-describedby="max_price-error"{% endif %}>
+            </div>
+
+            <div class="field">
+                <label for="sort">Sort by <span class="tag tag-soon">Soon</span></label>
+                <select id="sort" disabled aria-describedby="soon-note">
+                    <option>Newest first</option>
+                </select>
+            </div>
+
+            <button class="button button-dark filter-submit" type="submit">Search</button>
+        </div>
+
+        {% if errors.min_price or errors.max_price %}
+            <div class="filter-errors">
+                {% if errors.min_price %}<p class="field-error" id="min_price-error">Min price: {{ errors.min_price }}</p>{% endif %}
+                {% if errors.max_price %}<p class="field-error" id="max_price-error">Max price: {{ errors.max_price }}</p>{% endif %}
+            </div>
+        {% endif %}
+
+        <div class="filter-extra">
+            <label class="checkbox">
+                <input type="checkbox" disabled>
+                <span>Available listings only <span class="tag tag-soon">Coming soon</span></span>
+            </label>
+            <p class="filter-note" id="soon-note">Prices are per kg. Categories, sorting and other units (tonne, bag or truckload) are coming soon.</p>
+        </div>
+    </form>
+
+    <p class="results-line" role="status">
+        <span><strong>{{ listings|length }}</strong> listing{{ "" if listings|length == 1 else "s" }} {{ "match your search" if filtering else "available" }}</span>
+        {% if filtering %}<a class="text-link" href="{{ url_for('marketplace') }}">Clear all filters</a>{% endif %}
+    </p>
+
+    {% if listings %}
+        <ul class="listing-grid">
+            {% for listing in listings %}
+                <li class="listing-card">
+                    <div class="listing-cover {% if not listing.cover_photo %}media-missing{% endif %}">
+                        {% if listing.cover_photo %}
+                            <img src="{{ media_url('image', listing.cover_photo) }}" alt="" loading="lazy" decoding="async"
+                                 onerror="this.parentElement.classList.add('media-missing')">
+                        {% endif %}
+                        <span class="media-placeholder">No photo yet</span>
+                        <span class="badge badge-available">Available</span>
+                        {% if listing.photo_count or listing.video_count %}
+                            <span class="media-pills">
+                                {% if listing.photo_count %}<span class="media-pill">{{ listing.photo_count }} photo{{ "" if listing.photo_count == 1 else "s" }}</span>{% endif %}
+                                {% if listing.video_count %}<span class="media-pill">▶ Video</span>{% endif %}
+                            </span>
+                        {% endif %}
+                    </div>
+                    <div class="listing-body">
+                        <h3><a href="{{ url_for('listing_detail', listing_id=listing.id) }}">{{ listing.waste_type }}</a></h3>
+                        <p class="listing-line">{{ listing.quantity_kg|amount }} kg · {{ listing.location }}</p>
+                        <p class="listing-seller">{{ listing.seller_business or listing.seller_name }}</p>
+                        <p class="listing-price">{{ listing.price_per_kg|money }} <small>per kg</small></p>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+
+        {# Every listing shows on one page for now; page-by-page browsing is not built yet. #}
+        <nav class="pagination" aria-label="Pages">
+            <span aria-disabled="true">← Previous</span>
+            <span>Page 1 of 1</span>
+            <span aria-disabled="true">Next →</span>
+        </nav>
+    {% else %}
+        <div class="empty-state">
+            <h2>No listings found</h2>
+            {% if filtering %}
+                <p>Try a different search or location, or widen the price range.</p>
+                <a class="button button-secondary" href="{{ url_for('marketplace') }}">Clear all filters</a>
+            {% else %}
+                <p>New agricultural waste listings will appear here as sellers add them.</p>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

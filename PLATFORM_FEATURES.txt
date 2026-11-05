@@ -1,0 +1,432 @@
+HEYCILENG AGTECH - PLATFORM FEATURES
+====================================
+Every feature the website has today, taken from the actual code.
+Section 15 lists what the platform does NOT do yet.
+
+
+1. WHAT THE PLATFORM IS
+-----------------------
+An online marketplace for agricultural waste and byproducts.
+- Sellers: farmers and agro-processors with crop waste to sell
+  (cassava peels, rice husks, maize stalks, bagasse, shells and so on).
+- Buyers: feed mills, fertilizer companies and bio-energy companies that
+  use that waste as raw material.
+Sellers list what they have. Buyers search, view details and phone the
+seller directly. There is no online payment or ordering.
+
+
+2. TECHNOLOGY
+-------------
+- Backend: Python with Flask 3.1 (one file: app.py).
+- Database: SQLite (database/database.db), built into Python.
+- Pages: Jinja2 HTML templates (templates/ folder).
+- Styling: plain CSS (static/css/style.css for every page,
+  static/css/home.css for the homepage only).
+- Scripts: one plain JavaScript file (static/js/script.js), no frameworks.
+- Fonts: Bricolage Grotesque (headings) and Public Sans (body text) from
+  Google Fonts, with system fonts as a fallback.
+- Run it: .\venv\Scripts\Activate.ps1, then python app.py,
+  then open http://127.0.0.1:5000
+
+
+3. PAGES AND ADDRESSES
+----------------------
+Anyone can open:
+  /                          Landing page (homepage)
+  /login                     Log in
+  /register                  Sign up, step 1: choose Buyer or Seller
+  /register/buyer            Sign up, step 2: buyer form
+  /register/seller           Sign up, step 2: seller form
+  /forgot-password           Request a password reset link
+  /reset-password/<code>     Choose a new password (from the reset link)
+  /terms                     Terms and Conditions (draft)
+  /contact                   Contact form submission (homepage form)
+
+Logged-in users only:
+  /marketplace               Browse and search all listings
+  /listings/<id>             Full details of one listing
+  /seller/dashboard          Seller dashboard (sellers only)
+  /buyer/dashboard           Buyer dashboard (buyers only)
+  /logout                    Log out (a button, not a link)
+
+Sellers only, and only for their own listings:
+  /listings/new              Add a listing (the form is on the seller dashboard)
+  /listings/<id>/edit        Edit a listing and its photos/video
+  /listings/<id>/delete      Delete a listing
+
+Old links such as /register?type=seller still work and go to the right form.
+Unknown pages show a friendly "Page not found" page. Forbidden actions
+show a friendly "Not allowed" page.
+
+
+4. LANDING PAGE (/)
+-------------------
+Sections, top to bottom:
+- Transparent header over the hero: HeyCileng logo, Home, About,
+  Features, Contact, Login and an ochre "Sign Up" button (or Dashboard and
+  Log out when logged in), plus the light/dark toggle.
+- Hero: full-height rice-harvest photo with a dark green gradient, the
+  headline "Farm remnants and spoils, back to work.", a short paragraph,
+  and "Buy biomass" and "Sell your biomass" buttons.
+- Stats band: 30-40% of harvests lost after the field; 15 million t of wet
+  cassava peels produced in Nigeria each year; most of those peels dumped
+  or burned. Sources (ThisDay, ILRI) are linked under the numbers.
+- About: "Waste for one business is raw material for another." with a
+  photo of farmers carrying their harvest.
+- What you can buy: four photo cards (cassava peels, rice husks, sugarcane
+  bagasse, crop stalks), each with a "See listings" button that opens a
+  marketplace search.
+- How it works: four numbered steps (List, Match, Order, Collect). Order is
+  marked "Coming soon": buyers call the seller for now.
+- Sell your biomass: three cards (farmers and cooperatives, agro-processors,
+  aggregators and hubs), a "Start selling" button and "Already selling?
+  Log in".
+- Contact: a message form (name, email, message).
+- Footer: Marketplace, How it works, About, Contact and Terms links,
+  copyright and photo credits.
+
+
+5. ACCOUNTS AND SIGN-UP
+-----------------------
+Two account types: Buyer and Seller. The type cannot be changed later.
+
+Step 1, /register: "I want to" with two cards, Buy (feed mills,
+fertilizer and energy companies) and Sell (farmers, cooperatives,
+processors, aggregators).
+
+Step 2, the form for the chosen role. The same two cards stay at the top
+with the chosen one highlighted, so the role can be switched. The role
+comes from the web address, so it stays the same through errors and cannot
+be faked by editing the form.
+
+Buyer form fields:
+- Full name (required, up to 100 characters)
+- Email address (required, must be valid, must not already be registered;
+  capital letters are ignored)
+- Phone number (required, 7-15 digits; spaces, dashes, brackets and a
+  leading + are allowed)
+- Password (required, 8-128 characters) with a Show/Hide button
+- Confirm password (must match) with a Show/Hide button
+- Company name (optional)
+- Terms and Conditions checkbox (required)
+- Button: "Create Account"
+
+Seller form: the same fields, plus
+- Business name (required, up to 100 characters)
+- Business description (required, up to 1000 characters)
+- Button: "Create Seller Account"
+
+Validation:
+- Every field is checked on the server. The browser also checks some
+  fields first, including that the two passwords match.
+- Each problem is shown in red under its field, and a light-red summary
+  box appears above the form.
+- What was typed is kept after an error, except passwords.
+- After signing up, the user is logged in and taken to their dashboard
+  with a welcome message.
+
+
+6. LOGIN, LOGOUT AND PASSWORDS
+------------------------------
+Login (/login):
+- Email and password, with a Show/Hide button on the password.
+- "Remember me for 30 days" checkbox. Without it, the login ends when the
+  browser is closed.
+- "Forgot password?" link and a "Sign up" link.
+- A wrong email or wrong password gives the same message, so nobody can
+  find out which emails have accounts.
+- Logged-in users who open login or sign-up pages go to their dashboard.
+
+Logout:
+- "Log out" at the bottom of the sidebar (or in the top navigation on
+  public pages). It clears the session and shows "You have been logged out."
+
+Forgot and reset password:
+- Enter an email. The same reply is shown whether or not the account
+  exists.
+- The reset link works once, for 1 hour. Only the newest link works.
+- Only a scrambled (hashed) version of the link's secret is stored.
+- The reset page asks for the new password twice, with Show/Hide.
+- After a reset, the account is logged out on every device.
+- Email sending is NOT set up. While developing, the link is printed in
+  the terminal running the app.
+
+Password security:
+- Passwords are stored only as scrypt hashes, never as plain text.
+
+
+7. SELLER DASHBOARD (/seller/dashboard)
+---------------------------------------
+- Heading "Seller dashboard", "Welcome, <first name>. Manage <business
+  name>'s listings here." and a "+ New listing" button.
+- Four tiles: Total listings, Available (every listing is live, so this
+  equals the total), Reserved and Sold. Reserved and Sold show
+  "Coming soon", because they are not tracked yet.
+- My listings: total kg available and how many listings have photos, then
+  one row per listing, newest first, with:
+    96px photo (or "No photo yet")
+    name (links to the details page), a "Live" tag, and "No photos yet"
+      if it has none
+    quantity, location and price per kg in Naira
+    first two lines of the description
+    date listed, number of photos, and whether there is a video
+    Edit, View and Delete buttons (Delete opens an "Are you sure?" box)
+- Quick actions: Add a new listing, View marketplace, Manage listings.
+- Your account panel: name, business name, account type, email, phone and
+  business description.
+- New listing form at the bottom (see section 9). "+ New listing" scrolls
+  to it and puts the cursor in the first field.
+- After a listing is added, the page reopens at the top with a message and
+  the updated numbers.
+
+
+8. BUYER DASHBOARD (/buyer/dashboard)
+-------------------------------------
+- Heading "Buyer dashboard", "Welcome, <first name>." and a "Browse the
+  marketplace" button.
+- Find raw materials: shortcuts to searches for cassava peels, rice husks
+  and crop stalks.
+- "Orders and saved searches" card, marked "Coming soon".
+- Your account panel: name, company name (if given), account type, email
+  and phone.
+
+
+9. LISTINGS (SELLERS)
+---------------------
+Listing fields:
+- Waste name or type (required, up to 100 characters)
+- Description (required, up to 1000 characters; line breaks are kept)
+- Quantity in kg (required, above 0, up to 2 decimal places)
+- Price per kg (required, above 0, up to 2 decimal places)
+- Location (required, up to 100 characters, free text)
+- Contact phone number (required; starts as the seller's own number and
+  can be changed for each listing)
+- Photos and video (optional, see section 10)
+
+Rules:
+- Only sellers can add listings. A listing always belongs to the seller
+  who is logged in.
+- Only a listing's own seller can edit or delete it. Buyers and other
+  sellers see "Not allowed", even if they type the address directly.
+- Numbers like -5, "nan" or 1e5 are refused.
+- Edits show on the marketplace straight away.
+- Deleting asks "Are you sure?" in a pop-up box (Cancel or Delete), then
+  removes the listing and its photo and video files. It cannot be undone.
+- The date each listing was created is saved automatically.
+
+
+10. PHOTO AND VIDEO UPLOADS
+---------------------------
+Limits:
+- Up to 6 photos per listing: JPG, JPEG, PNG or WEBP, up to 5 MB each.
+- Up to 1 video per listing: MP4 or WEBM, up to 50 MB.
+- Very large uploads are refused as a whole, with a friendly message.
+
+While choosing files (in the browser):
+- A preview of each photo and the video appears straight away.
+- Each chosen file has a Remove button, so it can be dropped before
+  submitting.
+- Choosing more photos adds to the earlier ones.
+- Wrong types and files that are too big are refused with a message
+  straight away.
+- Without JavaScript, the plain file boxes still work.
+
+On the server:
+- Every file is checked again: its extension, its actual contents (so a
+  renamed program or web page is refused), its size and the count.
+- Each file is saved under a new random name (for example 3f9a...c2.jpg),
+  never the uploader's own filename.
+- Photos go in static/uploads/images/, videos in static/uploads/videos/.
+- Uploaded files are served with headers that stop them running as code.
+
+Editing:
+- Current photos and the video are shown with "Remove" ticks. Ticked items
+  show "Will be removed" before saving.
+- More photos can be added, up to 6 in total.
+- Choosing a new video replaces the old one.
+- Removed and replaced files are deleted from disk after saving.
+
+Missing files:
+- If a file has been deleted from disk, pages still load. Missing photos
+  are skipped or show a placeholder, and the next save tidies up the record.
+
+Where media appears:
+- Marketplace cards: cover photo, plus "x photos" and "Video" pills.
+- Details page: photos and the video one at a time in a dark frame, with
+  thumbnails and "Previous / 2 of 5 / Next" buttons.
+- Seller dashboard: a photo for each listing.
+
+
+11. MARKETPLACE (/marketplace)
+------------------------------
+- For logged-in users only (buyers and sellers), because listings show
+  sellers' phone numbers.
+- Heading "Agricultural waste marketplace".
+- Filters in one row:
+    Search: partial match on the waste type, capital letters ignored
+    Category: shown, marked "Soon" (not built yet)
+    Location: dropdown of every location used in listings
+    Min price (₦) and Max price (₦)
+    Sort by: shown, marked "Soon" (not built yet)
+    Search button
+  plus an "Available listings only" box marked "Coming soon", and a note
+  that prices are per kg.
+- "<n> listings match your search", with a "Clear all filters" link.
+- Listing cards, newest first: photo (or "No photo yet"), an "Available"
+  badge, photo and video pills, name, quantity and location, the seller's
+  business name (or full name), and the price per kg in Naira. Clicking
+  anywhere on a card opens it.
+- "Previous / Page 1 of 1 / Next" (every listing is on one page for now).
+- "No listings found" when nothing matches.
+- Invalid prices in the filters show an error instead of breaking.
+
+Listing details (/listings/<id>):
+- Breadcrumb: Marketplace > listing name.
+- Photo and video gallery (or "No photos yet").
+- Available badge, name, location and price per kg.
+- Facts: quantity available, value of the full lot (quantity x price),
+  location and date listed. "Available from" and "Moisture" are shown as
+  "Coming soon".
+- Ordering panel marked "Coming soon" (online ordering with Paystack), with
+  a switched-off "Order this lot" button and a "How buying will work" link.
+- "Call the seller" button (tap to call) and the contact phone number.
+- Edit and Delete buttons, shown only to the listing's own seller.
+- Description panel.
+- About the seller panel: business name, name, date they joined, business
+  description, and "More from this seller" marked "Coming soon".
+
+
+12. OTHER PAGES
+---------------
+- Contact form (homepage): name, email and message (up to 2000
+  characters), all checked on the server. Messages are saved in the
+  database (contact_messages table). There is no page for reading them,
+  and no email notification.
+- Terms and Conditions (/terms): a placeholder draft, clearly marked, that
+  must be replaced with lawyer-reviewed terms before launch. The sign-up
+  forms link to it.
+- Error pages: friendly "Not allowed" (403), "Page not found" (404) and
+  "Files too large" (413) pages.
+- Messages (for example "Your listing has been added") appear as
+  pop-up messages in the bottom-right corner: green for success, red for
+  errors, each with an x to close it. Success messages close by themselves
+  after 8 seconds.
+
+
+13. DESIGN, RESPONSIVENESS AND ACCESSIBILITY
+--------------------------------------------
+Visual design:
+- Colours: leaf green #1d3a2a, ink #16221a, paper #f4f6ef, mist #e3e9da,
+  line #c9d3be, ochre #d49a1f (main buttons), white, muted #56645a,
+  danger #a3221b and success #24613f. Light theme only.
+- Fonts: Bricolage Grotesque headings, Public Sans text (16px).
+- Rounded corners: 10px on cards and panels, 6px on buttons and fields.
+- Buttons: ochre (main), white with a green border (secondary), dark green,
+  and red-bordered (danger).
+- Sticky dark-green header on public pages (transparent over the landing
+  page photo), a sidebar on logged-in pages, and a dark ink footer.
+- A farmland photo is fixed behind every page at 7% strength and partly
+  grey, like a watermark. Phones get a portrait crop of it.
+- Prices are in Naira, like ₦15,000 (kobo shown only when there are any).
+- Real photographs of agriculture throughout, stored in the project.
+  Credits for every photo are in the footer ("Photo credits").
+- If a photo fails to load, a labelled panel is shown instead of a broken
+  image.
+
+Two navigation styles:
+- Public pages (landing, log in, sign up, password pages, terms): a
+  horizontal top bar with Home, About, Features, Contact, Login and Sign Up.
+  Features goes to the "How it works" section.
+- Logged-in pages (dashboards, marketplace, listing details, edit listing):
+  a left-hand sidebar with the user's name and account type, then
+    Overview (the dashboard), Marketplace,
+    My listings (sellers only), My orders ("Soon", not a link yet),
+    Profile (the account panel on the dashboard),
+    the light/dark toggle and Log out.
+  The current page has a tinted background and a green bar beside it.
+  Notifications and Earnings are not shown, because they are not built.
+- Error pages use whichever layout matches whether you are logged in.
+
+Light and dark mode:
+- A sun/moon toggle in the top bar (public pages) and the sidebar.
+- Light: cream background, white cards, forest-green buttons, dark text.
+- Dark: deep charcoal background, dark grey panels, light text, lighter
+  greens. All text colour pairs meet the 4.5:1 contrast guideline.
+- The choice is saved in the browser (localStorage) and remembered on every
+  page and visit. With no saved choice, it follows the device setting.
+- The saved theme is applied before the page is drawn, so there is no flash
+  of the wrong theme.
+
+Responsiveness (works from 320px phones to wide desktops, with no
+sideways scrolling):
+- Below 820px the public navigation becomes a hamburger menu that opens
+  into a full-width green panel. It closes on Escape, on a tap outside it,
+  or when a link is tapped.
+- Below 960px the sidebar hides behind a menu button in a green top bar,
+  and slides in from the left over a dark backdrop. It closes on Escape,
+  the x button, a tap on the backdrop, or when a link is tapped.
+- Grids reflow from one or two columns on phones to three or four on
+  larger screens.
+- The login and sign-up pages show a tall photo card beside the form, only
+  on screens wider than 860px.
+
+Accessibility:
+- Every image has alt text, or is marked decorative.
+- Form errors are linked to their fields, so screen readers read them out.
+- A 3px ochre focus outline is visible for keyboard users, and a "Skip to
+  content" link appears on the first Tab press.
+- The "reduce motion" setting is respected.
+- Text contrast was measured against the background photo.
+
+
+14. SECURITY AND DATA
+---------------------
+Security:
+- Protection against forged forms (a CSRF token) on every form.
+- Login cookies cannot be read by scripts (HttpOnly) and are not sent with
+  forms posted from other websites (SameSite=Lax).
+- Dashboards are not stored by the browser, so the Back button cannot show
+  them after logout.
+- All database queries are parameterised (protected against SQL injection).
+- Everything users type is escaped when shown, so typed HTML cannot run.
+- Logout is POST-only.
+- The session signing key is generated once and saved in
+  instance/secret_key.txt (kept out of git), or taken from the SECRET_KEY
+  environment variable.
+
+Database tables (SQLite):
+- users: name, email, phone, password hash, account type, business name,
+  business description, terms-accepted date, created date.
+- listings: seller, waste type, description, quantity (kg), price per kg,
+  location, contact phone, created date.
+- listing_media: one row per photo or video (listing, type, random file
+  name, size, order, date). Rows are deleted with their listing.
+- password_resets: hashed reset codes with an expiry time.
+- contact_messages: messages from the contact form.
+- Existing data is never deleted when the app adds new tables or columns.
+
+Git ignores: instance/, database/*.db, static/uploads/, venv/, __pycache__/.
+
+
+15. NOT BUILT YET
+-----------------
+- Email sending (password reset links, contact form notifications).
+- Online ordering or payments.
+- Listing status (sold, reserved, paused). Every listing is always live.
+  Shown as "Coming soon" on the seller dashboard.
+- Sales, orders or view statistics.
+- Categories (waste type is free text). Shown as "Soon" in the filters.
+- Units other than kg (no tonnes, bags or truckloads).
+- "Available from" date and moisture level for listings ("Coming soon").
+- Location is free text (no list of Nigerian states).
+- Pagination: all marketplace listings show on one page.
+- Sorting options in the marketplace ("Soon" in the filters).
+- "More from this seller" listings ("Coming soon").
+- An admin area (for example to read contact messages or remove listings).
+- Editing a user's profile after sign-up.
+- Removing location data (GPS) from uploaded phone photos.
+- Support for iPhone HEIC photos and MOV videos.
+- Limits on repeated login attempts.
+- Production setup: HTTPS, secure cookies, debug mode off, a production
+  web server.
+- Final Terms and Conditions text.

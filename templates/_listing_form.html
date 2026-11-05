@@ -1,0 +1,47 @@
+{# Shared form for adding and editing a listing. Needs: action, submit_label, form, errors, media. #}
+{# multipart/form-data is needed for the browser to send the chosen files. #}
+<form method="post" action="{{ action }}" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="field">
+        <label for="waste_type">Waste name or type</label>
+        <input id="waste_type" name="waste_type" type="text" maxlength="100" required value="{{ form.waste_type }}">
+        {% if errors.waste_type %}<p class="field-error">{{ errors.waste_type }}</p>{% endif %}
+    </div>
+
+    <div class="field">
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="4" maxlength="1000" required>{{ form.description }}</textarea>
+        {% if errors.description %}<p class="field-error">{{ errors.description }}</p>{% endif %}
+    </div>
+
+    <div class="field-row">
+        <div class="field">
+            <label for="quantity_kg">Quantity (kg)</label>
+            <input id="quantity_kg" name="quantity_kg" type="number" inputmode="decimal" min="0.01" max="999999999.99" step="0.01" required value="{{ form.quantity_kg }}">
+            {% if errors.quantity_kg %}<p class="field-error">{{ errors.quantity_kg }}</p>{% endif %}
+        </div>
+
+        <div class="field">
+            <label for="price_per_kg">Price per kg</label>
+            <input id="price_per_kg" name="price_per_kg" type="number" inputmode="decimal" min="0.01" max="999999999.99" step="0.01" required value="{{ form.price_per_kg }}">
+            {% if errors.price_per_kg %}<p class="field-error">{{ errors.price_per_kg }}</p>{% endif %}
+        </div>
+    </div>
+
+    <div class="field">
+        <label for="location">Location</label>
+        <input id="location" name="location" type="text" maxlength="100" required value="{{ form.location }}">
+        {% if errors.location %}<p class="field-error">{{ errors.location }}</p>{% endif %}
+    </div>
+
+    <div class="field">
+        <label for="contact_phone">Contact phone number</label>
+        <input id="contact_phone" name="contact_phone" type="tel" autocomplete="tel" required value="{{ form.contact_phone }}">
+        {% if errors.contact_phone %}<p class="field-error">{{ errors.contact_phone }}</p>{% endif %}
+    </div>
+
+    {% include "_media_fields.html" %}
+
+    <button class="button button-primary" type="submit">{{ submit_label }}</button>
+</form>

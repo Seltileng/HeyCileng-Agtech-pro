@@ -1,0 +1,27 @@
+{#
+    Two-column layout for log in and sign-up: the form on a white panel on the
+    left, a tall photo card on the right (hidden below 860px).
+    Pages fill "auth_card", and can replace "auth_photo" for a different photo.
+#}
+{% extends "layout_public.html" %}
+{% from "_photo.html" import photo %}
+
+{% block content %}
+<div class="container page">
+    <div class="auth-layout">
+        <section class="panel auth-panel">
+            {% block auth_card %}{% endblock %}
+        </section>
+
+        <aside class="auth-photo-card" aria-hidden="true">
+            {% block auth_photo %}
+                {{ photo("hero-rice-harvest", "", 1400, 933, 960, sizes="560px", label="Rice harvest") }}
+                <div class="auth-photo-text">
+                    <h2>Farm remnants and spoils, back to work.</h2>
+                    <p>Sell crop waste or buy dependable biomass, all across Nigeria.</p>
+                </div>
+            {% endblock %}
+        </aside>
+    </div>
+</div>
+{% endblock %}

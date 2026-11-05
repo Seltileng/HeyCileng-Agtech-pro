@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}HeyCileng Agtech{% endblock %}</title>
+    <meta name="description" content="HeyCileng Agtech connects farmers and agro-processors across Nigeria with the feed mills, fertilizer companies and bio-energy companies that buy agricultural waste.">
+    <meta name="theme-color" content="#1d3a2a">
+    <meta name="color-scheme" content="light dark">
+    {# Sets the saved theme before anything is drawn, so the page never
+       flashes the wrong theme. With no saved choice it follows the device. #}
+    <script>
+        (function () {
+            var theme = null;
+            try { theme = localStorage.getItem("heycileng-theme"); } catch (error) {}
+            if (theme !== "light" && theme !== "dark") {
+                theme = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+            }
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
+    <link rel="icon" href="{{ url_for('static', filename='images/logo.svg') }}" type="image/svg+xml">
+    <!-- Fonts: Bricolage Grotesque for headings, Public Sans for text. If they
+         fail to load, the fallbacks in style.css are used. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Public+Sans:wght@400;500;600&display=swap">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+    <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    {# layout_public.html (top navigation) and layout_app.html (sidebar)
+       fill this block. Pages extend one of those two layouts. #}
+    {% block layout %}{% endblock %}
+
+    {# Messages such as "Your listing has been added" appear as toasts in the
+       bottom-right corner. The x button (script.js) dismisses them. #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="toast-region">
+                {% for category, message in messages %}
+                    <div class="toast alert alert-{{ category }}" role="{{ 'alert' if category == 'error' else 'status' }}">
+                        <p>{{ message }}</p>
+                        <button class="toast-close" type="button" aria-label="Dismiss message" hidden>&times;</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {# "Are you sure?" box for Delete buttons (forms with data-confirm). #}
+    <dialog class="confirm-dialog" id="confirm-dialog" aria-labelledby="confirm-title">
+        <form method="dialog">
+            <h2 id="confirm-title">Are you sure?</h2>
+            <p data-confirm-message></p>
+            <div class="dialog-actions">
+                <button class="button button-secondary" value="cancel">Cancel</button>
+                <button class="button button-danger-solid" value="confirm">Delete</button>
+            </div>
+        </form>
+    </dialog>
+</body>
+</html>

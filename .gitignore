@@ -1,0 +1,23 @@
+# Environment variables and secrets
+.env
+.env.*
+
+# Private: holds the session signing key
+instance/
+
+# Private: holds user details and password hashes
+database/*.db
+
+# Python virtual environment
+venv/
+pycache/
+*.pyc
+
+# Node dependencies
+node_modules/
+
+# Seller uploads
+static/uploads/
+
+# IDE
+.vscode/

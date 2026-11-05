@@ -1,0 +1,34 @@
+{% extends "layout_public.html" %}
+
+{% block title %}Terms and Conditions | HeyCileng Agtech{% endblock %}
+
+{% block content %}
+<div class="container page">
+    <div class="page-header">
+        <div>
+            <h1>Terms and Conditions</h1>
+            <p class="page-subtitle">Draft for development</p>
+        </div>
+    </div>
+    <article class="panel terms">
+        {# DRAFT: replace this text with terms reviewed by a lawyer before launch. #}
+            <p class="form-error">Draft: these terms are a placeholder written for development. They must be replaced with terms reviewed by a qualified lawyer before HeyCileng launches.</p>
+
+            <h2>1. What HeyCileng does</h2>
+            <p>HeyCileng Agtech is a marketplace where sellers list agricultural waste and byproducts and buyers find them. HeyCileng is not a party to any sale. Prices, quantities, collection and delivery are agreed directly between the buyer and the seller.</p>
+
+            <h2>2. Your account</h2>
+            <p>You must give accurate details when you sign up and keep your password private. You are responsible for everything done with your account.</p>
+
+            <h2>3. Listings</h2>
+            <p>Sellers must only list waste they have the right to sell, and must describe its type, quantity, condition, price and location honestly. HeyCileng may remove listings that are misleading or unlawful.</p>
+
+            <h2>4. Contact details</h2>
+            <p>Logged-in users can see the contact phone number on each listing. Only use these details to arrange trades on HeyCileng.</p>
+
+            <h2>5. Changes</h2>
+            <p>These terms may change. We will show the date of the latest version on this page.</p>
+    </article>
+    <p class="auth-switch"><a class="text-link" href="{{ url_for('register') }}">Back to sign up</a></p>
+</div>
+{% endblock %}

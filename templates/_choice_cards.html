@@ -1,0 +1,16 @@
+{#
+    "I want to" cards: Buy or Sell. Each card is a link to that sign-up form
+    (/register/buyer or /register/seller), so the chosen role always comes from
+    the web address. The current role ("role") gets the selected style.
+#}
+<p class="choice-label" id="choice-label">I want to</p>
+<div class="choice-cards" role="list" aria-labelledby="choice-label">
+    <a class="choice-card" role="listitem" href="{{ url_for('register_account', role='buyer') }}" {% if role == "buyer" %}aria-current="true"{% endif %}>
+        <strong>Buy</strong>
+        <span>Feed mills, fertilizer and energy companies</span>
+    </a>
+    <a class="choice-card" role="listitem" href="{{ url_for('register_account', role='seller') }}" {% if role == "seller" %}aria-current="true"{% endif %}>
+        <strong>Sell</strong>
+        <span>Farmers, cooperatives, processors, aggregators</span>
+    </a>
+</div>

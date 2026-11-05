@@ -1,0 +1,35 @@
+{# Shared footer for both layouts. Includes the photo credits the licences require. #}
+<footer class="site-footer">
+    <div class="container footer-inner">
+        <div class="footer-top">
+            <p class="footer-brand">HeyCileng Agtech</p>
+            <nav class="footer-links" aria-label="Footer">
+                <a href="{{ url_for('marketplace') }}">Marketplace</a>
+                <a href="{{ url_for('index', _anchor='how-it-works') }}">How it works</a>
+                <a href="{{ url_for('index', _anchor='about') }}">About</a>
+                <a href="{{ url_for('index', _anchor='contact') }}">Contact</a>
+                <a href="{{ url_for('terms') }}">Terms</a>
+                {% if not g.user %}<a href="{{ url_for('forgot_password') }}">Forgot password</a>{% endif %}
+            </nav>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; HeyCileng Agtech. Giving farm waste another market, across Nigeria.</p>
+            <details class="photo-credits">
+                <summary>Photo credits</summary>
+                <p>Photos from Wikimedia Commons, used under their Creative Commons licences:</p>
+                <ul>
+                    <li><a href="https://commons.wikimedia.org/wiki/File:Farmland.Hawul_Borno_State_Nigeria._2019.DSC01953.jpg">Background: farmland in Hawul, Borno State</a> by Ifeatu Nnaobi, <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a></li>
+                    <li><a href="https://commons.wikimedia.org/wiki/File:Harvest_in_progress.jpg">Rice harvest</a> by Photobyamin, <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a></li>
+                    <li><a href="https://commons.wikimedia.org/wiki/File:Farmers_in_Tula.jpg">Farmers in Tula</a> by BarryTheOctopus, <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a></li>
+                    <li><a href="https://commons.wikimedia.org/wiki/File:Peeling_cassava_for_Garri.jpg">Cassava peels</a> by Sasu photography, <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a></li>
+                    <li><a href="https://commons.wikimedia.org/wiki/File:Rice_husk.jpg">Rice husks</a> by GST HBK, public domain</li>
+                    <li><a href="https://commons.wikimedia.org/wiki/File:Sugarcane_bagasse.jpg">Sugarcane bagasse</a> by Thamizhpparithi Maari, <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a></li>
+                    <li><a href="https://commons.wikimedia.org/wiki/File:Harvest_2.jpg">Crop stalks</a> by Wilhelm Nomu Kutah, <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a></li>
+                    <li><a href="https://commons.wikimedia.org/wiki/File:Farmer_feeding_his_poultry.jpg">Poultry feeding</a> by Emmanuel Ssekaggo, <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a></li>
+                </ul>
+                <p>Photos were resized and cropped for the web.</p>
+            </details>
+        </div>
+    </div>
+</footer>

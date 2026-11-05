@@ -1,0 +1,35 @@
+{#
+    Top navigation for the public pages (landing, log in, sign up, password,
+    terms). Logged-in visitors see Dashboard and Log out instead of Login
+    and Sign Up. Below 820px the links fold into the hamburger menu.
+#}
+{% set endpoint = request.endpoint %}
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="brand" href="{{ url_for('index') }}">HeyCileng</a>
+
+        <div class="header-tools">
+            {% include "_theme_toggle.html" %}
+            <button class="menu-button" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu">
+                <span class="menu-icon" aria-hidden="true"></span>
+            </button>
+        </div>
+
+        <nav class="site-nav" id="site-nav" aria-label="Main">
+            <a href="{{ url_for('index') }}" {% if endpoint == 'index' %}aria-current="page"{% endif %}>Home</a>
+            <a href="{{ url_for('index', _anchor='about') }}">About</a>
+            <a href="{{ url_for('index', _anchor='how-it-works') }}">Features</a>
+            <a href="{{ url_for('index', _anchor='contact') }}">Contact</a>
+            {% if g.user %}
+                <a href="{{ url_for(g.user.account_type ~ '_dashboard') }}">Dashboard</a>
+                <form method="post" action="{{ url_for('logout') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button class="nav-link-button" type="submit">Log out</button>
+                </form>
+            {% else %}
+                <a href="{{ url_for('login') }}" {% if endpoint in ('login', 'forgot_password', 'reset_password') %}aria-current="page"{% endif %}>Login</a>
+                <a class="button button-accent button-small" href="{{ url_for('register') }}" {% if endpoint in ('register', 'register_account') %}aria-current="page"{% endif %}>Sign Up</a>
+            {% endif %}
+        </nav>
+    </div>
+</header>

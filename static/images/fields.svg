@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 260" preserveAspectRatio="xMidYMax slice">
+  <!-- Sun -->
+  <circle cx="1130" cy="112" r="58" fill="#f7f1e3"/>
+
+  <!-- Far hill -->
+  <path d="M0 150C200 86 380 92 600 138s420 40 840-34v156H0z" fill="#2f6b3f"/>
+
+  <!-- Middle hill with crop rows -->
+  <path d="M0 196c240-66 470-70 730-30s460 28 710-26v120H0z" fill="#3f8150"/>
+  <g fill="none" stroke="#2f6b3f" stroke-width="3" opacity="0.7">
+    <path d="M60 192c220-52 430-52 670-16"/>
+    <path d="M190 200c180-30 360-30 560-6"/>
+    <path d="M780 174c220 28 420 18 620-30"/>
+    <path d="M860 196c190 16 370 6 540-30"/>
+  </g>
+
+  <!-- Near hill, same cream as the next page section -->
+  <path d="M0 238c300-46 560-46 820-20s420 18 620-16v58H0z" fill="#f7f1e3"/>
+</svg>

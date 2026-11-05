@@ -1,0 +1,13 @@
+{#
+    Layout for public pages: top navigation, page content, footer.
+    Used by the landing page, log in, sign up, password pages and terms.
+#}
+{% extends "base.html" %}
+
+{% block layout %}
+    {% include "_public_nav.html" %}
+    <main id="main">
+        {% block content %}{% endblock %}
+    </main>
+    {% include "_footer.html" %}
+{% endblock %}
